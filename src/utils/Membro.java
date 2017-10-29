@@ -12,6 +12,7 @@ public class Membro {
     private String matricula_universidade;
     private String nome;
     private String CPF;
+    private String RG;
     private String ocupacao;
     private String status;
     private Date membro_desde;
@@ -61,6 +62,14 @@ public class Membro {
 
     public void setCPF(String CPF) {
         this.CPF = CPF;
+    }
+
+    public String getRG() {
+        return RG;
+    }
+
+    public void setRG(String RG) {
+        this.RG = RG;
     }
 
     public String getOcupacao() {
