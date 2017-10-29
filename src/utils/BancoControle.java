@@ -2,6 +2,7 @@ package utils;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -15,11 +16,16 @@ public class BancoControle {
     
     private Properties props;
     private Connection conn;
+    private String url;
 
-    public BancoControle(String user, String password, boolean ssl) {
+    public BancoControle(String user, String password, Boolean ssl) {
+        url = "jdbc:postgresql://localhost:5432/atleticasbd";
         try{
-            Class.forName("org.postgresql.Driver");
-            String url = "";
+            props = new Properties();
+            props.setProperty("user", user);
+            props.setProperty("password", password);
+//            props.setProperty("ssl", ssl.toString());
+            Class.forName("org.postgresql.Driver");            
             conn = DriverManager.getConnection(url, props);
         }catch(ClassNotFoundException e){
             System.err.println("Erro ao carregar a classe do driver do banco!");
@@ -36,8 +42,7 @@ public class BancoControle {
     
     public boolean adicionaMembro(Membro membro){
         String cmd = "INSERT INTO membro VALUES " + membro.toSQL() + ";";
-        try{
-            Statement st = conn.createStatement();
+        try(Statement st = conn.createStatement()){            
             st.executeUpdate(cmd);
         }catch(SQLException e){
             System.err.println("Erro ao adicionar membro na tabela!");
@@ -65,12 +70,42 @@ public class BancoControle {
     
     public ArrayList<Membro> procuraMembro(String coluna, String txt){
         String cmd = "SELECT * FROM membro WHERE " + coluna + " = " + txt;
-        return null;
+        ArrayList<Membro> queryResult = null;
+        
+        try(Statement st = conn.createStatement();
+            ResultSet rs = st.executeQuery(cmd)   ){
+            
+            while(rs.next())
+                queryResult.add(new Membro(rs));
+            
+        }catch(SQLException e){
+            System.err.println("Erro ao procurar o membro na tabela!");
+            System.err.println("Salvando o log do erro no arquivo de erros...");
+            Logs.printLogErro(e);
+            return null;
+        }
+        return queryResult;
     }
     
-    public ArrayList<Membro> procuraMembro(String coluna){
+    public ArrayList<Membro> carregaTabela(){
         String cmd = "SELECT * FROM membro";
-        return null;
+        ArrayList<Membro> queryResult = null;
+        
+        try(Statement st = conn.createStatement();
+            ResultSet rs = st.executeQuery(cmd)   ){
+            queryResult = new ArrayList<>();
+            
+            while(rs.next()){
+                queryResult.add(new Membro(rs));
+            }
+            
+        }catch(SQLException e){
+            System.err.println("Erro ao carregar a tabela!");
+            System.err.println("Salvando o log do erro no arquivo de erros...");
+            Logs.printLogErro(e);
+            return null;
+        }
+        return queryResult;
     }
     
     public boolean atualizaMembro(String coluna, String novo_valor, String valor_antigo){
