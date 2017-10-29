@@ -51,14 +51,14 @@ public class BancoControle {
     public boolean removeMembro(Membro membro){
         String cmd = "DELETE FROM membro WHERE matricula_atletica = " 
                 + membro.getMatricula_atletica() + ";";
-        try{
-            Statement st = conn.createStatement();
+        
+        try(Statement st = conn.createStatement()){
             st.executeUpdate(cmd);
         }catch(SQLException e){
             System.err.println("Erro ao excluir o membro da tabela!");
             System.err.println("Salvando o log do erro no arquivo de erros...");
             Logs.printLogErro(e);
-            return false;
+            return false;            
         }
         return true;
     }
@@ -71,5 +71,20 @@ public class BancoControle {
     public ArrayList<Membro> procuraMembro(String coluna){
         String cmd = "SELECT * FROM membro";
         return null;
+    }
+    
+    public boolean atualizaMembro(String coluna, String novo_valor, String valor_antigo){
+        String cmd = "UPDATE TABLE membro SET " + coluna + " = " + novo_valor +
+                     " WHERE " + coluna + " = " + valor_antigo;
+        
+        try(Statement st = conn.createStatement()){
+            st.executeUpdate(cmd);
+        }catch(SQLException e){
+            System.err.println("Erro ao atualizar o membro da tabela!");
+            System.err.println("Salvando o log do erro no arquivo de erros...");
+            Logs.printLogErro(e);
+            return false;
+        }
+        return true;
     }
 }
