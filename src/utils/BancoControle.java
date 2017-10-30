@@ -14,9 +14,9 @@ import java.util.Properties;
  */
 public class BancoControle {
     
-    private Properties props;
-    private Connection conn;
-    private String url;
+    private static Properties props;
+    private static Connection conn;
+    private static String url;
 
     public BancoControle(String user, String password, Boolean ssl) {
         url = "jdbc:postgresql://localhost:5432/atleticasbd";
@@ -40,7 +40,7 @@ public class BancoControle {
         }
     }  
     
-    public boolean adicionaMembro(Membro membro){
+    public static boolean adicionaMembro(Membro membro){
         String cmd = "INSERT INTO membro VALUES " + membro.toSQL() + ";";
         try(Statement st = conn.createStatement()){            
             st.executeUpdate(cmd);
@@ -53,7 +53,7 @@ public class BancoControle {
         return true;
     }
     
-    public boolean removeMembro(Membro membro){
+    public static boolean removeMembro(Membro membro){
         String cmd = "DELETE FROM membro WHERE matricula_atletica = " 
                 + membro.getMatricula_atletica() + ";";
         
@@ -68,7 +68,7 @@ public class BancoControle {
         return true;
     }
     
-    public ArrayList<Membro> procuraMembro(String coluna, String txt){
+    public static ArrayList<Membro> procuraMembro(String coluna, String txt){
         String cmd = "SELECT * FROM membro WHERE " + coluna + " = " + txt;
         ArrayList<Membro> queryResult = null;
         
@@ -87,7 +87,7 @@ public class BancoControle {
         return queryResult;
     }
     
-    public ArrayList<Membro> carregaTabela(){
+    public static ArrayList<Membro> carregaTabela(){
         String cmd = "SELECT * FROM membro";
         ArrayList<Membro> queryResult = null;
         
@@ -108,7 +108,7 @@ public class BancoControle {
         return queryResult;
     }
     
-    public boolean atualizaMembro(String coluna, String novo_valor, String valor_antigo){
+    public static boolean atualizaMembro(String coluna, String novo_valor, String valor_antigo){
         String cmd = "UPDATE TABLE membro SET " + coluna + " = " + novo_valor +
                      " WHERE " + coluna + " = " + valor_antigo;
         
@@ -121,5 +121,22 @@ public class BancoControle {
             return false;
         }
         return true;
+    }
+    
+    public static String getMaxMatriculaAtletica(){
+        String cmd = "SELECT max(matricula_atletica) FROM membro;";
+        try(Statement st = conn.createStatement();
+            ResultSet rs = st.executeQuery(cmd)  ){
+            
+            while(rs.next())
+                return rs.getString("max");
+            
+        }catch(SQLException e){
+            System.err.println("Erro ao pegar a ultima matricula!");
+            System.err.println("Salvando o log do erro no arquivo de erros...");
+            e.printStackTrace();
+            Logs.printLogErro(e);            
+        }
+        return null;
     }
 }
