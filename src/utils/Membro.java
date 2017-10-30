@@ -18,7 +18,10 @@ public class Membro {
     private String RG;
     private String ocupacao;
     private String status;
-    //private String curso;
+    private String curso;
+    private String email;
+    private String telefone;
+    private LocalDate dataNascimento;
     private LocalDate membro_desde;
 
     public Membro() {
@@ -122,6 +125,38 @@ public class Membro {
 
     public void setMembro_desde(LocalDate membro_desde) {
         this.membro_desde = membro_desde;
+    }
+
+    public String getCurso() {
+        return curso;
+    }
+
+    public void setCurso(String curso) {
+        this.curso = curso;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
+    }
+
+    public LocalDate getDataNascimento() {
+        return dataNascimento;
+    }
+
+    public void setDataNascimento(LocalDate dataNascimento) {
+        this.dataNascimento = dataNascimento;
     }
 
     public String toSQL() {
