@@ -9,8 +9,9 @@ import javax.swing.table.AbstractTableModel;
  */
 public class TabelaMembros extends AbstractTableModel{
     
-    public String colunas[] = {"Matricula Atlética",
+    public String colunas[] = {"Mat. Atlética",
                                "Nome",
+                               "Contato",
                                "Curso",
                                "Status"};
     
@@ -54,8 +55,10 @@ public class TabelaMembros extends AbstractTableModel{
             case 1:
                 return mbr.getNome();
             case 2:
-                return mbr.getNome(); //MUDAR DEPOIS
+                return mbr.getTelefone(); //MUDAR DEPOIS
             case 3:
+                return mbr.getCurso();
+            case 4:
                 return mbr.getStatus();
         }
         
