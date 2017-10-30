@@ -18,6 +18,7 @@ public class Membro {
     private String RG;
     private String ocupacao;
     private String status;
+    //private String curso;
     private LocalDate membro_desde;
 
     public Membro() {
