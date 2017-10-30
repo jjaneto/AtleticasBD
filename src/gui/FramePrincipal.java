@@ -5,16 +5,17 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import javax.swing.Icon;
+import java.util.ArrayList;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import utils.BancoControle;
 import utils.Membro;
+import utils.TabelaMembros;
 
 /**
  *
@@ -28,6 +29,8 @@ public class FramePrincipal extends JFrame {
     private JButton btAdicionar;
     private JButton btExcluir;
     private JButton btEditar;
+    
+    private ArrayList<Membro> arrMembros;
 
     public FramePrincipal() {
         setLayout(new BorderLayout());
@@ -36,7 +39,7 @@ public class FramePrincipal extends JFrame {
 
         setTitle("Banco de dados da Atletica das Engenharias - UFS");
         setMinimumSize(new Dimension(300, 300));
-//        pack();
+        pack();
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setVisible(true);
@@ -87,7 +90,30 @@ public class FramePrincipal extends JFrame {
     
     public void constroiEAdicionaPanelInferior(){
         panelInferior = new JPanel(new BorderLayout());
-        panelInferior.add(new JLabel("TABELA DOS MEMBROS VAI AQUI"));
+        //panelInferior.add(new JLabel("TABELA DOS MEMBROS VAI AQUI"));
+        
+        arrMembros = BancoControle.carregaTabela();
+        
+        TabelaMembros model = new TabelaMembros(arrMembros);
+        
+        JTable tabela = new JTable(model);
+        JScrollPane scroll = new JScrollPane(tabela);
+        
+        panelInferior.add(scroll);
+        
+        tabela.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int rowClicked = tabela.rowAtPoint(e.getPoint());
+                int columnClicked = tabela.columnAtPoint(e.getPoint());
+                if(rowClicked >= 0 && columnClicked >= 0){
+                    new FrameVisualizar((Membro) arrMembros.get(rowClicked),
+                                        rowClicked, columnClicked);
+//                    System.out.println(tabela.getValueAt(rowClicked, columnClicked));
+                }
+            }
+        });
+        
         this.add(panelInferior, BorderLayout.CENTER);
     }
 

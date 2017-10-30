@@ -12,7 +12,7 @@ import utils.Membro;
 public class IniciaPrograma {
     
     public static void main(String args[]){
-//        BancoControle bdc = new BancoControle("postgres", "root", true);
+        BancoControle bdc = new BancoControle("postgres", "root", true);
 //        for(Membro mbr : bdc.carregaTabela()){
 //            System.out.println(mbr);
 //        }
