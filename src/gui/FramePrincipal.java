@@ -19,10 +19,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
+import javax.swing.table.DefaultTableCellRenderer;
 import net.miginfocom.swing.MigLayout;
 import utils.BancoControle;
 import utils.HintJTextField;
 import utils.Membro;
+import utils.RendererMembros;
 import utils.TabelaMembros;
 
 /**
@@ -223,6 +225,7 @@ public class FramePrincipal extends JFrame {
         model = new TabelaMembros(arrMembros, arrAuxiliar);
 
         tabela = new JTable(model);
+        tabela.setDefaultRenderer(Object.class, new RendererMembros());
         
         tabela.setGridColor(Color.gray);
         scroll = new JScrollPane(tabela);
