@@ -3,26 +3,22 @@ package gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
-import net.miginfocom.layout.CC;
 import net.miginfocom.swing.MigLayout;
 import utils.BancoControle;
 import utils.HintJTextField;
@@ -192,11 +188,11 @@ public class FramePrincipal extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if(btPesquisa.isEnabled()){
-                    System.out.println((Membro.FIELD)combo.getSelectedItem() == Membro.FIELD.MAT_UNI);
+//                    System.out.println((Membro.FIELD)combo.getSelectedItem() == Membro.FIELD.MAT_UNI);
                     
-//                    searchAndGet(textPesquisa.getText(), combo.getSelectedIndex());
-//                    model.trocaArrayParaAuxiliar();
-//                    btReturnTable.setEnabled(true);
+                    searchAndGet(textPesquisa.getText(), (Membro.FIELD)combo.getSelectedItem());
+                    model.trocaArrayParaAuxiliar();
+                    btReturnTable.setEnabled(true);
                 }
             }
         });        
@@ -248,15 +244,108 @@ public class FramePrincipal extends JFrame {
         this.add(panelInferior, BorderLayout.CENTER);
     }
 
-    public void searchAndGet(String what, int field){
+    public void searchAndGet(String what, Membro.FIELD field){
         model.limpaArrayAux();
         switch(field){
-            case 0:
+            case MATRICULA_ATL:
                 for(Membro mbr : arrMembros){
                     if(mbr.getMatricula_atletica()
                             .substring(0, Math.min(what.length(), mbr.getMatricula_atletica().length() - 1))
                             .equals(what)){
                         model.addMembroArrAuxiliar(mbr);
+                    }
+                }
+                break;
+            case MAT_UNI:
+                for(Membro mbr : arrMembros){
+                    String total = mbr.getMatricula_universidade();
+                    String sub = total.substring(0, Math.min(what.length(), total.length() - 1));
+                    if(what.equals(sub)){
+                        model.addMembroArrAuxiliar(mbr);
+                    }
+                }
+                break;
+            case NOME:
+                for(Membro mbr : arrMembros){
+                    String total = mbr.getNome();
+                    String sub = total.substring(0, Math.min(what.length(), total.length() - 1));
+                    if(what.equals(sub)){
+                        model.addMembroArrAuxiliar(mbr);
+                    }
+                }
+                break;
+            case RG:
+                for(Membro mbr : arrMembros){
+                    String total = mbr.getRG();
+                    String sub = total.substring(0, Math.min(what.length(), total.length() - 1));
+                    if(what.equals(sub)){
+                        model.addMembroArrAuxiliar(mbr);
+                    }
+                }
+                break;
+            case CPF:
+                for(Membro mbr : arrMembros){
+                    String total = mbr.getCPF();
+                    String sub = total.substring(0, Math.min(what.length(), total.length() - 1));
+                    if(what.equals(sub)){
+                        model.addMembroArrAuxiliar(mbr);
+                    }
+                }
+                break;
+            case OCUPACAO:
+                for(Membro mbr : arrMembros){
+                    String total = mbr.getOcupacao();
+                    String sub = total.substring(0, Math.min(what.length(), total.length() - 1));
+                    if(what.equals(sub)){
+                        model.addMembroArrAuxiliar(mbr);
+                    }
+                }
+                break;
+            case STATUS:
+                
+                break;
+            case CURSO:
+                for(Membro mbr : arrMembros){
+                    String total = mbr.getCurso();
+                    String sub = total.substring(0, Math.min(what.length(), total.length() - 1));
+                    if(what.equals(sub)){
+                        model.addMembroArrAuxiliar(mbr);
+                    }
+                }
+                break;
+            case TELEFONE:
+                for(Membro mbr : arrMembros){
+                    String total = mbr.getTelefone();
+                    String sub = total.substring(0, Math.min(what.length(), total.length() - 1));
+                    if(what.equals(sub)){
+                        model.addMembroArrAuxiliar(mbr);
+                    }
+                }
+                break;
+            case EMAIL: 
+                for(Membro mbr : arrMembros){
+                    String total = mbr.getEmail();
+                    String sub = total.substring(0, Math.min(what.length(), total.length() - 1));
+                    if(what.equals(sub)){
+                        model.addMembroArrAuxiliar(mbr);
+                    }
+                }
+                break;
+            case NASCIMENTO:
+                for(Membro mbr : arrMembros){
+                    LocalDate dateMembro = mbr.getDataNascimento();
+                    LocalDate diaPesquisado = LocalDate.parse(what, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+                    if(dateMembro.isEqual(diaPesquisado)){
+                        arrMembros.add(mbr);
+                    }
+                }
+                break;
+            case MEMBRO_DESDE:
+                for(Membro mbr : arrMembros){
+                    LocalDate dateMembro = mbr.getMembro_desde();
+                    LocalDate diaPesquisado = LocalDate.parse(what, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+                    if(dateMembro.isAfter(diaPesquisado) || dateMembro.isEqual(diaPesquisado)){
+                        arrMembros.add(mbr);
                     }
                 }
                 break;
