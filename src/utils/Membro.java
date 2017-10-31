@@ -14,6 +14,33 @@ public class Membro {
     public enum STATUS{
         PAGO, DEVENDO, A_VENCER;
     }
+    
+    public enum FIELD{
+        
+        MATRICULA_ATL("Mat. Atlética"), 
+        MAT_UNI("Mat. Universidade"),
+        NOME("Nome"),
+        RG("RG"),
+        CPF("CPF"),
+        OCUPACAO("Ocupação"),
+        STATUS("STATUS"),
+        CURSO("Curso"),
+        TELEFONE("Telefone"),
+        EMAIL("Email"),
+        NASCIMENTO("Nascimento"),
+        MEMBRO_DESDE("Membro Desde");
+        
+        private final String value;
+        
+        private FIELD(String value){
+            this.value = value;
+        }
+        
+        @Override
+        public String toString(){
+            return this.value;
+        }
+    }
 
     private String matricula_atletica;
     private String matricula_universidade;
