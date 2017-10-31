@@ -78,22 +78,25 @@ public class FramePrincipal extends JFrame {
                             "Só é possível excluir um membro\ndigitando a "
                                     + "matrícula da atlética do membro", 
                             "Excluir membro", JOptionPane.WARNING_MESSAGE);
-                    boolean exists = false;
+//                    boolean exists = false;
+                    Membro selected = null;
                     for(Membro mbr : arrMembros){
                         if(mbr.getMatricula_atletica().equals(matricula)){
-                            exists = true; 
+                            selected = mbr;
                             break;
                         }
                     }
-                    if(exists){
+                    if(selected != null){
                         int optionClicked = JOptionPane.showConfirmDialog(getContentPane(),
                                 "Você tem certeza de que quer excluir esse membro?"
                                         + "\nEssa ação não pode ser desfeita!", 
-                                "Confirmar exclusão", JOptionPane.YES_NO_OPTION);
+                                "Confirmar exclusão", JOptionPane.YES_NO_OPTION,
+                                JOptionPane.WARNING_MESSAGE);
                         if(optionClicked == JOptionPane.YES_OPTION){
-                            
+                            BancoControle.removeMembro(selected);
+                            model.removeMembro(selected);
                         }
-                    }else{
+                    }else if(matricula != null && selected == null){
                         JOptionPane.showMessageDialog(getContentPane(), 
                                 "Essa matrícula não existe!", 
                                 "Ops!", JOptionPane.ERROR_MESSAGE);
@@ -153,7 +156,6 @@ public class FramePrincipal extends JFrame {
 
     public void constroiEAdicionaPanelInferior() {
         panelInferior = new JPanel(new BorderLayout());
-        //panelInferior.add(new JLabel("TABELA DOS MEMBROS VAI AQUI"));
 
         arrMembros = BancoControle.carregaTabela();
 
