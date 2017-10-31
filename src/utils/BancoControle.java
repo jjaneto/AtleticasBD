@@ -54,15 +54,16 @@ public class BancoControle {
     }
     
     public static boolean removeMembro(Membro membro){
-        String cmd = "DELETE FROM membro WHERE matricula_atletica = " 
-                + membro.getMatricula_atletica() + ";";
-        
+        String cmd = "DELETE FROM membro WHERE matricula_atletica = '" 
+                + membro.getMatricula_atletica() + "';";
+        System.out.println(cmd);
         try(Statement st = conn.createStatement()){
             st.executeUpdate(cmd);
         }catch(SQLException e){
             System.err.println("Erro ao excluir o membro da tabela!");
             System.err.println("Salvando o log do erro no arquivo de erros...");
             Logs.printLogErro(e);
+            e.printStackTrace();
             return false;            
         }
         return true;
@@ -108,9 +109,23 @@ public class BancoControle {
         return queryResult;
     }
     
-    public static boolean atualizaMembro(String coluna, String novo_valor, String valor_antigo){
+    public static boolean atualizaMembroUnicaColuna(String coluna, String novo_valor, String valor_antigo){
         String cmd = "UPDATE TABLE membro SET " + coluna + " = " + novo_valor +
                      " WHERE " + coluna + " = " + valor_antigo;
+        
+        try(Statement st = conn.createStatement()){
+            st.executeUpdate(cmd);
+        }catch(SQLException e){
+            System.err.println("Erro ao atualizar o membro da tabela!");
+            System.err.println("Salvando o log do erro no arquivo de erros...");
+            Logs.printLogErro(e);
+            return false;
+        }
+        return true;
+    }
+    
+    public static boolean atualizaMembroVariasColunas(String colunas[], String novos_valores[], String chave){
+        String cmd = "UPDATE TABLE membro SET ";
         
         try(Statement st = conn.createStatement()){
             st.executeUpdate(cmd);

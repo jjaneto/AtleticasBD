@@ -7,49 +7,66 @@ import javax.swing.table.AbstractTableModel;
  *
  * @author jjaneto
  */
-public class TabelaMembros extends AbstractTableModel{
-    
+public class TabelaMembros extends AbstractTableModel {
+
     public String colunas[] = {"Mat. Atlética",
-                               "Nome",
-                               "Contato",
-                               "Curso",
-                               "Status"};
-    
+        "Nome",
+        "Contato",
+        "Curso",
+        "Status"};
+
+    private boolean isAux = false;
+
     ArrayList<Membro> arrRows;
+    ArrayList<Membro> arrAux;
 
     public TabelaMembros() {
         arrRows = new ArrayList<>();
-    }   
-
-    public TabelaMembros(ArrayList<Membro> arrRows) {
-        this.arrRows = arrRows;
+        this.arrAux = new ArrayList<>();
     }
-    
+
+    public TabelaMembros(ArrayList<Membro> arrRows, ArrayList<Membro> arrAux) {
+        this.arrRows = arrRows;
+        this.arrAux = arrAux;
+    }
+
     @Override
-    public boolean isCellEditable(int rowIndex, int columnIndex){
+    public boolean isCellEditable(int rowIndex, int columnIndex) {
         return false;
-    }    
+    }
 
     @Override
     public int getRowCount() {
-        return arrRows.size();
+        if (isAux) {
+            return arrAux.size();
+        } else {
+            return arrRows.size();
+        }
+
+//        return arrRows.size();
     }
 
     @Override
     public int getColumnCount() {
         return colunas.length;
     }
-    
+
     @Override
-    public String getColumnName(int columnIndex){
+    public String getColumnName(int columnIndex) {
         return colunas[columnIndex];
     }
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Membro mbr = arrRows.get(rowIndex);
-        
-        switch(columnIndex){
+        Membro mbr;
+        if (isAux) {
+            mbr = arrAux.get(rowIndex);
+        } else {
+            mbr = arrRows.get(rowIndex);
+        }
+//        Membro mbr = arrRows.get(rowIndex);
+
+        switch (columnIndex) {
             case 0:
                 return mbr.getMatricula_atletica();
             case 1:
@@ -61,13 +78,45 @@ public class TabelaMembros extends AbstractTableModel{
             case 4:
                 return mbr.getStatus();
         }
-        
+
         return null;
     }
-    
-    public void addMembro(Membro mbr){
+
+    public void addMembro(Membro mbr) {
         this.arrRows.add(mbr);
+        fireTableRowsInserted(arrRows.size() - 1, arrRows.size());
+    }
+
+    public void removeMembro(Membro mbr) {
+        this.arrRows.remove(mbr);
         fireTableDataChanged();
     }
+
+    public void trocaArrayParaAuxiliar() {
+        if (!isAux) {
+            isAux = true;
+            fireTableDataChanged();
+        }
+    }
     
+    public void trocaAuxiliarParaArray(){
+        if(isAux){
+            isAux = false;
+            fireTableDataChanged();
+        }
+    }
+    
+    public void addMembroArrAuxiliar(Membro mbr){
+        this.arrAux.add(mbr);
+        fireTableRowsInserted(arrAux.size() - 1, arrAux.size());
+    }
+    
+    public void limpaArrayPrincipal(){
+        this.arrRows.clear();
+    }
+    
+    public void limpaArrayAux(){
+        this.arrAux.clear();
+    }
+
 }

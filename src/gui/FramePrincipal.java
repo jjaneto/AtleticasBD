@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -23,6 +25,7 @@ import javax.swing.SwingUtilities;
 import net.miginfocom.layout.CC;
 import net.miginfocom.swing.MigLayout;
 import utils.BancoControle;
+import utils.HintJTextField;
 import utils.Membro;
 import utils.TabelaMembros;
 
@@ -32,23 +35,57 @@ import utils.TabelaMembros;
  */
 public class FramePrincipal extends JFrame {
 
+    /**
+     * Panels desse JFrame.
+     */
     private JPanel panelSuperior;
     private JPanel panelInferior;
 
+    /**
+     * Componentes do Panel Superior.
+     */
     private JButton btAdicionar;
     private JButton btExcluir;
     private JButton btEditar;
+    private JButton btReturnTable;
+    private JButton btPesquisa;    
+    private HintJTextField textPesquisa;
+    private JComboBox combo;
+    
+    /**
+     * Componentes do Panel Inferior.
+     */
+    private TabelaMembros model;
+    private JTable tabela;
+    private JScrollPane scroll;
 
+    /**
+     * Arrays que compõem as tabelas.
+     */
     public ArrayList<Membro> arrMembros;
+    public ArrayList<Membro> arrAuxiliar;    
 
-    TabelaMembros model;
-
+    /**
+     * Campos do ComboBox.
+     */
+    public String campos[] = {
+            "Mat. Atletica", 
+            "Mat. Universidade", 
+            "Nome",
+            "CPF",
+            "RG",
+            "Ocupação",
+            "Telefone",
+            "Email",
+            "Data de Nascimento"
+        };
+    
     public FramePrincipal() {
+        super("Banco de dados da Atletica das Engenharias - UFS");
         setLayout(new BorderLayout());
         constroiEAdicionaPanelSuperior();
         constroiEAdicionaPanelInferior();
 
-        setTitle("Banco de dados da Atletica das Engenharias - UFS");
         setMinimumSize(new Dimension(600, 300));
         pack();
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -76,7 +113,7 @@ public class FramePrincipal extends JFrame {
                 if (e.getButton() == MouseEvent.BUTTON1) {
                     String matricula = JOptionPane.showInputDialog(getContentPane(), 
                             "Só é possível excluir um membro\ndigitando a "
-                                    + "matrícula da atlética do membro", 
+                                    + "matrícula da atlética do mesmo", 
                             "Excluir membro", JOptionPane.WARNING_MESSAGE);
 //                    boolean exists = false;
                     Membro selected = null;
@@ -121,30 +158,55 @@ public class FramePrincipal extends JFrame {
                 }
             }
         });
+        
+        btReturnTable = new JButton();
+        btReturnTable.setIcon(new ImageIcon("./img/return.png"));
+        btReturnTable.setEnabled(false);
+        btReturnTable.setToolTipText(
+                "Ativado apenas se a tabela abaixo for a dos resultados de pesquisa."
+                + " Ao clicá-lo, a tabela original será restaurada.");
+        
+        btReturnTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                model.trocaAuxiliarParaArray();
+                model.limpaArrayAux();
+                btReturnTable.setEnabled(false);
+            }
+        });
 
         panelSuperior = new JPanel(new MigLayout("fillx"));
-        panelSuperior.add(btAdicionar, "growx");
+        panelSuperior.add(btAdicionar, "growx, split 4");
         panelSuperior.add(btExcluir, "growx");
-        panelSuperior.add(btEditar, "growx, wrap");
+        panelSuperior.add(btEditar, "growx");
+        panelSuperior.add(btReturnTable, "wrap");
         
-        String campos[] = {
-            "Mat. Atletica", 
-            "Mat. Universidade", 
-            "Nome",
-            "CPF",
-            "RG",
-            "Ocupação",
-            "Telefone",
-            "Email",
-            "Data de Nascimento"
-        };
+               
+        combo = new JComboBox(campos);
         
-        JComboBox combo = new JComboBox(campos);
-        
-        JTextField textPesquisa = new JTextField();
-        
-        JButton btPesquisa = new JButton(new ImageIcon("./img/find.png"));
+        textPesquisa = new HintJTextField("Selecione a opção ao lado e digite a pesquisa aqui.");
+        btPesquisa = new JButton(new ImageIcon("./img/find.png"));
         btPesquisa.setToolTipText("Buscar campo digitado!");
+        btPesquisa.setEnabled(false);
+        btPesquisa.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if(btPesquisa.isEnabled()){
+                    searchAndGet(textPesquisa.getText(), combo.getSelectedIndex());
+                    model.trocaArrayParaAuxiliar();
+                    btReturnTable.setEnabled(true);
+                }
+            }
+        });        
+        
+        textPesquisa.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                if(textPesquisa.getText().isEmpty()){
+                    btPesquisa.setEnabled(false);
+                }else btPesquisa.setEnabled(true);
+            }
+        });
         
         panelSuperior.add(combo, "spanx, split 3");
         panelSuperior.add(textPesquisa, "spanx, growx");
@@ -158,13 +220,14 @@ public class FramePrincipal extends JFrame {
         panelInferior = new JPanel(new BorderLayout());
 
         arrMembros = BancoControle.carregaTabela();
+        arrAuxiliar = new ArrayList<>();
 
-        model = new TabelaMembros(arrMembros);
+        model = new TabelaMembros(arrMembros, arrAuxiliar);
 
-        JTable tabela = new JTable(model);
+        tabela = new JTable(model);
         
         tabela.setGridColor(Color.gray);
-        JScrollPane scroll = new JScrollPane(tabela);
+        scroll = new JScrollPane(tabela);
 
         panelInferior.add(scroll);
 
@@ -183,4 +246,18 @@ public class FramePrincipal extends JFrame {
         this.add(panelInferior, BorderLayout.CENTER);
     }
 
+    public void searchAndGet(String what, int field){
+        model.limpaArrayAux();
+        switch(field){
+            case 0:
+                for(Membro mbr : arrMembros){
+                    if(mbr.getMatricula_atletica()
+                            .substring(0, Math.min(what.length(), mbr.getMatricula_atletica().length() - 1))
+                            .equals(what)){
+                        model.addMembroArrAuxiliar(mbr);
+                    }
+                }
+                break;
+        }
+    }
 }

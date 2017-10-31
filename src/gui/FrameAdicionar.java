@@ -16,10 +16,12 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import net.miginfocom.swing.MigLayout;
 import utils.BancoControle;
 import utils.Membro;
+import utils.TabelaMembros;
 
 /**
  *
@@ -29,6 +31,7 @@ public class FrameAdicionar extends JFrame {
 
     private JPanel panelPrincipal;
     private JPanel panelBotoes;
+    
     private JTextField jtfMatAtletica;
     private JTextField jtfMatUniversidade;
     private JTextField jtfNome;
@@ -36,11 +39,15 @@ public class FrameAdicionar extends JFrame {
     private JTextField jtfRG;
     private JTextField jtfOcupacao;
     private JTextField jtfStatus;
+    
     private JButton btOk;
     private JButton btCancelar;
+    
+    private TabelaMembros model;
 
-    public FrameAdicionar() throws HeadlessException {
+    public FrameAdicionar(TabelaMembros model) throws HeadlessException {
         setLayout(new BorderLayout());
+        this.model = model;
         constroiEAdicionaPanelBotoes();
         constroiEAdicionaPanelPrincipal();
 
@@ -74,9 +81,8 @@ public class FrameAdicionar extends JFrame {
                     JOptionPane.showMessageDialog(getContentPane(), 
                             "Adição concluída com sucesso!", 
                             "Êxito", JOptionPane.INFORMATION_MESSAGE);
+                    model.addMembro(mbr);
                     dispose();
-                }else{
-                    
                 }
             }
         });
@@ -95,7 +101,7 @@ public class FrameAdicionar extends JFrame {
     }
 
     public void constroiEAdicionaPanelPrincipal() {
-        panelPrincipal = new JPanel(new MigLayout("debug, fillx"));
+        panelPrincipal = new JPanel(new MigLayout("fillx"));
         this.add(panelPrincipal, BorderLayout.CENTER);
         
         System.out.println(BancoControle.getMaxMatriculaAtletica());
