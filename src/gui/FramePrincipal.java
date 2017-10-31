@@ -182,7 +182,7 @@ public class FramePrincipal extends JFrame {
         panelSuperior.add(btReturnTable, "wrap");
         
                
-        combo = new JComboBox(campos);
+        combo = new JComboBox(Membro.FIELD.values());
         
         textPesquisa = new HintJTextField("Selecione a opção ao lado e digite a pesquisa aqui.");
         btPesquisa = new JButton(new ImageIcon("./img/find.png"));
@@ -192,9 +192,11 @@ public class FramePrincipal extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if(btPesquisa.isEnabled()){
-                    searchAndGet(textPesquisa.getText(), combo.getSelectedIndex());
-                    model.trocaArrayParaAuxiliar();
-                    btReturnTable.setEnabled(true);
+                    System.out.println((Membro.FIELD)combo.getSelectedItem() == Membro.FIELD.MAT_UNI);
+                    
+//                    searchAndGet(textPesquisa.getText(), combo.getSelectedIndex());
+//                    model.trocaArrayParaAuxiliar();
+//                    btReturnTable.setEnabled(true);
                 }
             }
         });        
