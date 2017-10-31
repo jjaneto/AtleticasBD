@@ -10,6 +10,10 @@ import java.time.format.DateTimeFormatter;
  * @author jjaneto
  */
 public class Membro {
+    
+    public enum STATUS{
+        PAGO, DEVENDO, A_VENCER;
+    }
 
     private String matricula_atletica;
     private String matricula_universidade;
