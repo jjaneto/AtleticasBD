@@ -14,8 +14,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import net.miginfocom.swing.MigLayout;
+import utils.BancoControle;
 import utils.Membro;
 import utils.FrameInterativo;
+import utils.TabelaMembros;
 
 /**
  *
@@ -29,6 +31,7 @@ public final class FrameVisualizar extends JFrame implements FrameInterativo {
     private Membro mbr;
     private int rowStatus;
     private int columnStatus;
+    private TabelaMembros model;
 
     /**
      * Panels que compõem esse JFrame.
@@ -77,11 +80,12 @@ public final class FrameVisualizar extends JFrame implements FrameInterativo {
      */
     private JTextField arrTextField[];
 
-    public FrameVisualizar(Membro mbr, int rowStatus, int columnStatus) throws HeadlessException {
+    public FrameVisualizar(TabelaMembros model, Membro mbr, int rowStatus, int columnStatus) throws HeadlessException {
         super("Tela do membro " + mbr.getMatricula_atletica());
         this.mbr = mbr;
         this.rowStatus = rowStatus;
         this.columnStatus = columnStatus;
+        this.model = model;
 
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout());
@@ -174,7 +178,25 @@ public final class FrameVisualizar extends JFrame implements FrameInterativo {
         btSalvar.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-
+                mbr.setCPF(jtfCPF.getText());
+                mbr.setMatricula_atletica(jtfMatAtl.getText());
+                mbr.setMatricula_universidade(jtfMatUniversidade.getText());
+                mbr.setNome(jtfNome.getText());
+                mbr.setRG(jtfRG.getText());
+                mbr.setOcupacao(jtfOcupacao.getText());
+                mbr.setStatus(jtfStatus.getText());
+                model.trocaMembro(rowStatus, mbr);
+                if(BancoControle.atualizaMembroVariasColunas(mbr)){
+                    JOptionPane.showMessageDialog(getContentPane(), 
+                            "O membro foi atualizado com sucesso.", 
+                            "Êxito", JOptionPane.INFORMATION_MESSAGE);
+                    dispose();
+                }else{
+                    JOptionPane.showMessageDialog(getContentPane(), 
+                            "Erro ao atualizar o membro.", 
+                            "Erro!", JOptionPane.ERROR_MESSAGE);
+                }
+                
             }
         });
 
