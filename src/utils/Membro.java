@@ -23,7 +23,7 @@ public class Membro {
         RG("RG"),
         CPF("CPF"),
         OCUPACAO("Ocupação"),
-        STATUS("STATUS"),
+        STATUS("Status"),
         CURSO("Curso"),
         TELEFONE("Telefone"),
         EMAIL("Email"),
@@ -68,7 +68,7 @@ public class Membro {
             this.ocupacao = st.getString("ocupacao");
             this.status = st.getString("status");
             this.membro_desde = LocalDate.parse(st.getString("membro_desde"),
-                                    DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+                                    DateTimeFormatter.ofPattern("dd/MM/yyyy"));
         } catch (SQLException e) {
             System.err.println("Erro ao setar atributo do membro durante sua inicializacao!");
             System.err.println("Salvando o log do erro no arquivo de erros...");
@@ -150,7 +150,7 @@ public class Membro {
     }
     
     public String getMembro_desde_formatado(){
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         return dtf.format(membro_desde);
     }
 
@@ -200,6 +200,17 @@ public class Membro {
         ret += "'" + getMembro_desde_formatado()+ "', ";
         ret += "'" + getOcupacao() + "', ";
         ret += "'" + getStatus() + "')";
+        return ret;
+    }
+    
+    public String toSQLUpdate(){
+        String ret = "";
+        ret += "nome = '" + getNome() + "', ";
+        ret += "matricula_universidade = '" + getMatricula_universidade() + "', ";
+        ret += "rg = '" + getRG() + "', ";
+        ret += "membro_desde = '" + getMembro_desde_formatado() + "', ";
+        ret += "ocupacao = '" + getOcupacao() + "', ";
+        ret += "status = '" + getStatus() + "'";        
         return ret;
     }
    
