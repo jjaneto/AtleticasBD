@@ -3,6 +3,8 @@ package gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -26,12 +28,13 @@ import utils.HintJTextField;
 import utils.Membro;
 import utils.RendererMembros;
 import utils.TabelaMembros;
+import utils.FrameInterativo;
 
 /**
  *
  * @author jjaneto
  */
-public class FramePrincipal extends JFrame {
+public final class FramePrincipal extends JFrame implements FrameInterativo{
 
     /**
      * Panels desse JFrame.
@@ -63,20 +66,6 @@ public class FramePrincipal extends JFrame {
     public ArrayList<Membro> arrMembros;
     public ArrayList<Membro> arrAuxiliar;    
 
-    /**
-     * Campos do ComboBox.
-     */
-    public String campos[] = {
-            "Mat. Atletica", 
-            "Mat. Universidade", 
-            "Nome",
-            "CPF",
-            "RG",
-            "Ocupação",
-            "Telefone",
-            "Email",
-            "Data de Nascimento"
-        };
     
     public FramePrincipal() {
         super("Banco de dados da Atletica das Engenharias - UFS");
@@ -113,7 +102,7 @@ public class FramePrincipal extends JFrame {
                             "Só é possível excluir um membro\ndigitando a "
                                     + "matrícula da atlética do mesmo", 
                             "Excluir membro", JOptionPane.WARNING_MESSAGE);
-//                    boolean exists = false;
+                    
                     Membro selected = null;
                     for(Membro mbr : arrMembros){
                         if(mbr.getMatricula_atletica().equals(matricula)){
@@ -182,6 +171,20 @@ public class FramePrincipal extends JFrame {
                
         combo = new JComboBox(Membro.FIELD.values());
         
+        combo.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if(e.getStateChange() == ItemEvent.SELECTED){
+                    if(combo.getSelectedItem().equals(Membro.FIELD.MEMBRO_DESDE)){
+                        JOptionPane.showMessageDialog(getContentPane(), 
+                                "Para essa opção, o resultado será todos os membros"
+                                        + " cadastrados a partir da data digitada.",
+                                "Aviso", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                }
+            }
+        });
+        
         textPesquisa = new HintJTextField("Selecione a opção ao lado e digite a pesquisa aqui.");
         btPesquisa = new JButton(new ImageIcon("./img/find.png"));
         btPesquisa.setToolTipText("Buscar campo digitado!");
@@ -189,9 +192,7 @@ public class FramePrincipal extends JFrame {
         btPesquisa.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if(btPesquisa.isEnabled()){
-//                    System.out.println((Membro.FIELD)combo.getSelectedItem() == Membro.FIELD.MAT_UNI);
-                    
+                if(btPesquisa.isEnabled()){                    
                     searchAndGet(textPesquisa.getText(), (Membro.FIELD)combo.getSelectedItem());
                     model.trocaArrayParaAuxiliar();
                     btReturnTable.setEnabled(true);
@@ -353,5 +354,15 @@ public class FramePrincipal extends JFrame {
                 }
                 break;
         }
+    }
+
+    @Override
+    public void instanciaEAdicionaVariaveis() {
+    
+    }
+
+    @Override
+    public void atribuiListeners() {
+    
     }
 }

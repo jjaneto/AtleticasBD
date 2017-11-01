@@ -22,16 +22,23 @@ import net.miginfocom.swing.MigLayout;
 import utils.BancoControle;
 import utils.Membro;
 import utils.TabelaMembros;
+import utils.FrameInterativo;
 
 /**
  *
  * @author jjaneto
  */
-public class FrameAdicionar extends JFrame {
+public final class FrameAdicionar extends JFrame implements FrameInterativo {
 
+    /**
+     * Panels que compõem este JFrame.
+     */
     private JPanel panelPrincipal;
     private JPanel panelBotoes;
-    
+
+    /**
+     * Todos os campos de digitação com seus respectivos labels.
+     */
     private JTextField jtfMatAtletica;
     private JTextField jtfMatUniversidade;
     private JTextField jtfNome;
@@ -39,32 +46,110 @@ public class FrameAdicionar extends JFrame {
     private JTextField jtfRG;
     private JTextField jtfOcupacao;
     private JTextField jtfStatus;
-    
+
+    private JLabel lbMatAtletica;
+    private JLabel lbMatUniversidade;
+    private JLabel lbNome;
+    private JLabel lbCPF;
+    private JLabel lbRG;
+    private JLabel lbOcupacao;
+    private JLabel lbStatus;
+
+    /**
+     * Botões.
+     */
     private JButton btOk;
     private JButton btCancelar;
-    
+
+    /**
+     * Tabela principal.
+     */
     private TabelaMembros model;
+    
+    /**
+     * A próxima matrícula (última + 1).
+     */
+    private int novaMatricula;
 
     public FrameAdicionar(TabelaMembros model) throws HeadlessException {
+        super("Adicionar Membro");
         setLayout(new BorderLayout());
         this.model = model;
-        constroiEAdicionaPanelBotoes();
-        constroiEAdicionaPanelPrincipal();
-
+        novaMatricula = Integer.valueOf(BancoControle.getMaxMatriculaAtletica());
+        
+        instanciaEAdicionaVariaveis();
+        atribuiListeners();
+        
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        //pack();
         setMinimumSize(new Dimension(400, 280));
         setLocationRelativeTo(null);
-        setTitle("Adicionar Membro");
         setVisible(true);
+        btCancelar.requestFocus();
     }
 
-    public void constroiEAdicionaPanelBotoes() {
-        panelBotoes = new JPanel(new GridLayout(1, 2, 1, 1));
-        this.add(panelBotoes, BorderLayout.SOUTH);
-
+    @Override
+    public void instanciaEAdicionaVariaveis() {
+        
+        /**
+         * Panel dos botoes.
+         */
         btOk = new JButton("Adicionar");
         btOk.setIcon(new ImageIcon("./img/ok.png"));
+        btCancelar = new JButton("Cancelar");
+        btCancelar.setIcon(new ImageIcon("./img/cancel.png"));
+        /**
+         * Panel dos dados do membro.
+         */
+        lbMatUniversidade = new JLabel("Matrícula da Universidade: ");
+        jtfMatUniversidade = new JTextField();
+        lbNome = new JLabel("Nome: ");
+        jtfNome = new JTextField();
+        lbCPF = new JLabel("CPF: ");
+        jtfCPF = new JTextField();
+        lbRG = new JLabel("RG: ");
+        jtfRG = new JTextField();
+        lbOcupacao = new JLabel("Ocupação: ");
+        jtfOcupacao = new JTextField();
+        lbStatus = new JLabel("Status: ");
+        jtfStatus = new JTextField();        
+        lbMatAtletica = new JLabel("Matrícula da Atlética: ");
+        jtfMatAtletica = new JTextField();
+        jtfMatAtletica.setText(String.valueOf(novaMatricula + 1));
+        jtfMatAtletica.setEditable(false);
+        jtfMatAtletica.setToolTipText("Matrícula escolhida automaticamente. "
+                + "Para editar manualmente, consulte o administrador.");
+        
+        /**
+         * Panel dos botões.
+         */
+        panelBotoes = new JPanel(new GridLayout(1, 2, 1, 1));
+        panelBotoes.add(btCancelar);
+        panelBotoes.add(btOk);
+        this.add(panelBotoes, BorderLayout.SOUTH);
+        
+        /**
+         * Panel dos dados do membro.
+         */
+        panelPrincipal = new JPanel(new MigLayout("fillx"));                
+        panelPrincipal.add(lbMatAtletica, "split 2");
+        panelPrincipal.add(jtfMatAtletica, "growx, wrap");       
+        panelPrincipal.add(lbMatUniversidade, "split 2");
+        panelPrincipal.add(jtfMatUniversidade, "growx, wrap");
+        panelPrincipal.add(lbNome, "split 2");
+        panelPrincipal.add(jtfNome, "growx, wrap");
+        panelPrincipal.add(lbCPF, "split 2");
+        panelPrincipal.add(jtfCPF, "growx, wrap");
+        panelPrincipal.add(lbRG, "split 2");
+        panelPrincipal.add(jtfRG, "growx, wrap");
+        panelPrincipal.add(lbOcupacao, "split 2");
+        panelPrincipal.add(jtfOcupacao, "growx, wrap");
+        panelPrincipal.add(lbStatus, "split 2");
+        panelPrincipal.add(jtfStatus, "growx");
+        this.add(panelPrincipal, BorderLayout.CENTER);
+    }
+
+    @Override
+    public void atribuiListeners() {
         btOk.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -77,76 +162,22 @@ public class FrameAdicionar extends JFrame {
                 mbr.setMembro_desde(LocalDate.now());
                 mbr.setOcupacao(jtfOcupacao.getText());
                 mbr.setStatus(jtfStatus.getText());
-                if(BancoControle.adicionaMembro(mbr)){
-                    JOptionPane.showMessageDialog(getContentPane(), 
-                            "Adição concluída com sucesso!", 
+                if (BancoControle.adicionaMembro(mbr)) {
+                    JOptionPane.showMessageDialog(getContentPane(),
+                            "Adição concluída com sucesso!",
                             "Êxito", JOptionPane.INFORMATION_MESSAGE);
                     model.addMembro(mbr);
                     dispose();
                 }
             }
         });
-
-        btCancelar = new JButton("Cancelar");
-        btCancelar.setIcon(new ImageIcon("./img/cancel.png"));
+        
         btCancelar.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 dispose();
             }
         });
-
-        panelBotoes.add(btCancelar);
-        panelBotoes.add(btOk);
-    }
-
-    public void constroiEAdicionaPanelPrincipal() {
-        panelPrincipal = new JPanel(new MigLayout("fillx"));
-        this.add(panelPrincipal, BorderLayout.CENTER);
-        
-        System.out.println(BancoControle.getMaxMatriculaAtletica());
-        
-        int novaMatricula = Integer.valueOf(BancoControle.getMaxMatriculaAtletica());
-        
-        JLabel lbMatAtletica = new JLabel("Matrícula da Atlética: ");
-        jtfMatAtletica = new JTextField();
-        jtfMatAtletica.setText(String.valueOf(novaMatricula + 1));
-        jtfMatAtletica.setEditable(false);
-        jtfMatAtletica.setToolTipText("Matrícula escolhida automaticamente. "
-                + "Para editar manualmente, consulte o administrador.");
-        panelPrincipal.add(lbMatAtletica, "split 2");
-        panelPrincipal.add(jtfMatAtletica, "growx, wrap");
-        
-        JLabel lbMatUniversidade = new JLabel("Matrícula da Universidade: ");
-        jtfMatUniversidade = new JTextField();
-        panelPrincipal.add(lbMatUniversidade, "split 2");
-        panelPrincipal.add(jtfMatUniversidade, "growx, wrap");
-        
-        JLabel lbNome = new JLabel("Nome: ");
-        jtfNome = new JTextField();
-        panelPrincipal.add(lbNome, "split 2");
-        panelPrincipal.add(jtfNome, "growx, wrap");
-        
-        JLabel lbCPF = new JLabel("CPF: ");
-        jtfCPF = new JTextField();
-        panelPrincipal.add(lbCPF, "split 2");
-        panelPrincipal.add(jtfCPF, "growx, wrap");
-        
-        JLabel lbRG = new JLabel("RG: ");
-        jtfRG = new JTextField();
-        panelPrincipal.add(lbRG, "split 2");
-        panelPrincipal.add(jtfRG, "growx, wrap");
-        
-        JLabel lbOcupacao = new JLabel("Ocupação: ");
-        jtfOcupacao = new JTextField();
-        panelPrincipal.add(lbOcupacao, "split 2");
-        panelPrincipal.add(jtfOcupacao, "growx, wrap");
-        
-        JLabel lbStatus = new JLabel("Status: ");
-        jtfStatus = new JTextField();
-        panelPrincipal.add(lbStatus, "split 2");
-        panelPrincipal.add(jtfStatus, "growx");
-     
     }
 
 }
