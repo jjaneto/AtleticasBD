@@ -172,7 +172,7 @@ public final class FramePrincipal extends JFrame implements FrameInterativo {
             case NASCIMENTO:
                 for (Membro mbr : arrMembros) {
                     LocalDate dateMembro = mbr.getDataNascimento();
-                    LocalDate diaPesquisado = LocalDate.parse(what, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+                    LocalDate diaPesquisado = LocalDate.parse(what, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
                     if (dateMembro.isEqual(diaPesquisado)) {
                         arrMembros.add(mbr);
                     }
@@ -181,7 +181,7 @@ public final class FramePrincipal extends JFrame implements FrameInterativo {
             case MEMBRO_DESDE:
                 for (Membro mbr : arrMembros) {
                     LocalDate dateMembro = mbr.getMembro_desde();
-                    LocalDate diaPesquisado = LocalDate.parse(what, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+                    LocalDate diaPesquisado = LocalDate.parse(what, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
                     if (dateMembro.isAfter(diaPesquisado) || dateMembro.isEqual(diaPesquisado)) {
                         arrMembros.add(mbr);
                     }
@@ -249,16 +249,6 @@ public final class FramePrincipal extends JFrame implements FrameInterativo {
             }
         });
 
-//        textPesquisa.addKeyListener(new KeyAdapter() {
-//            @Override
-//            public void keyTyped(KeyEvent e) {
-//                if (textPesquisa.getText().isEmpty()) {
-//                    btPesquisa.setEnabled(false);
-//                } else {
-//                    btPesquisa.setEnabled(true);
-//                }
-//            }
-//        });
         
         textPesquisa.getDocument().addDocumentListener(new DocumentListener() {
             @Override
