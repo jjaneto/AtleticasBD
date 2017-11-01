@@ -85,7 +85,7 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
     /**
      * A próxima matrícula (última + 1).
      */
-    private int novaMatricula;
+    private final int novaMatricula;
 
     public FrameAdicionar(TabelaMembros model) throws HeadlessException {
         super("Adicionar Membro");
@@ -97,7 +97,8 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
         atribuiListeners();
 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setMinimumSize(new Dimension(400, 280));
+        setMinimumSize(new Dimension(400, 350));
+        setResizable(false);
         setLocationRelativeTo(null);
         setVisible(true);
         btCancelar.requestFocus();
@@ -117,10 +118,11 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
         try {
             maskCPF = new MaskFormatter("###.###.###-##");
             maskTelefone = new MaskFormatter("(##)#####-####");
+            maskNascimento = new MaskFormatter("##/##/####");
         } catch (ParseException ex) {
             ex.printStackTrace();
         }
-        
+
         lbNascimento = new JLabel("Nascimento: ");
         jtfNascimento = new JFormattedTextField(maskNascimento);
         lbTelefone = new JLabel("Telefone: ");
@@ -128,7 +130,7 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
         lbCurso = new JLabel("Curso: ");
         jtfCurso = new JTextField();
         lbEmail = new JLabel("Email: ");
-        jtfEmail = new JTextField();        
+        jtfEmail = new JTextField();
         lbMatUniversidade = new JLabel("Matrícula da Universidade: ");
         jtfMatUniversidade = new JTextField();
         lbNome = new JLabel("Nome: ");
@@ -173,7 +175,15 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
         panelPrincipal.add(lbOcupacao, "split 2");
         panelPrincipal.add(jtfOcupacao, "growx, wrap");
         panelPrincipal.add(lbStatus, "split 2");
-        panelPrincipal.add(jtfStatus, "growx");
+        panelPrincipal.add(jtfStatus, "growx, wrap");
+        panelPrincipal.add(lbEmail, "split 2");
+        panelPrincipal.add(jtfEmail, "growx, wrap");
+        panelPrincipal.add(lbCurso, "split 2");
+        panelPrincipal.add(jtfCurso, "growx, wrap");
+        panelPrincipal.add(lbNascimento, "split 2");
+        panelPrincipal.add(jtfNascimento, "growx, wrap");
+        panelPrincipal.add(lbTelefone, "split 2");
+        panelPrincipal.add(jtfTelefone, "growx");
         this.add(panelPrincipal, BorderLayout.CENTER);
     }
 
