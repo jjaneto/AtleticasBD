@@ -6,18 +6,23 @@ import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.stage.WindowEvent;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.text.MaskFormatter;
 import net.miginfocom.swing.MigLayout;
 import utils.BancoControle;
 import utils.Membro;
@@ -42,10 +47,14 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
     private JTextField jtfMatAtletica;
     private JTextField jtfMatUniversidade;
     private JTextField jtfNome;
-    private JTextField jtfCPF;
     private JTextField jtfRG;
     private JTextField jtfOcupacao;
     private JTextField jtfStatus;
+    private JTextField jtfEmail;
+    private JTextField jtfCurso;
+    private JFormattedTextField jtfNascimento;
+    private JFormattedTextField jtfCPF;
+    private JFormattedTextField jtfTelefone;
 
     private JLabel lbMatAtletica;
     private JLabel lbMatUniversidade;
@@ -54,7 +63,14 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
     private JLabel lbRG;
     private JLabel lbOcupacao;
     private JLabel lbStatus;
+    private JLabel lbEmail;
+    private JLabel lbTelefone;
+    private JLabel lbCurso;
+    private JLabel lbNascimento;
 
+    private MaskFormatter maskCPF;
+    private MaskFormatter maskTelefone;
+    private MaskFormatter maskNascimento;
     /**
      * Botões.
      */
@@ -65,7 +81,7 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
      * Tabela principal.
      */
     private TabelaMembros model;
-    
+
     /**
      * A próxima matrícula (última + 1).
      */
@@ -76,10 +92,10 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
         setLayout(new BorderLayout());
         this.model = model;
         novaMatricula = Integer.valueOf(BancoControle.getMaxMatriculaAtletica());
-        
+
         instanciaEAdicionaVariaveis();
         atribuiListeners();
-        
+
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setMinimumSize(new Dimension(400, 280));
         setLocationRelativeTo(null);
@@ -89,7 +105,7 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
 
     @Override
     public void instanciaEAdicionaVariaveis() {
-        
+
         /**
          * Panel dos botoes.
          */
@@ -97,28 +113,41 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
         btOk.setIcon(new ImageIcon("./img/ok.png"));
         btCancelar = new JButton("Cancelar");
         btCancelar.setIcon(new ImageIcon("./img/cancel.png"));
-        /**
-         * Panel dos dados do membro.
-         */
+
+        try {
+            maskCPF = new MaskFormatter("###.###.###-##");
+            maskTelefone = new MaskFormatter("(##)#####-####");
+        } catch (ParseException ex) {
+            ex.printStackTrace();
+        }
+        
+        lbNascimento = new JLabel("Nascimento: ");
+        jtfNascimento = new JFormattedTextField(maskNascimento);
+        lbTelefone = new JLabel("Telefone: ");
+        jtfTelefone = new JFormattedTextField(maskTelefone);
+        lbCurso = new JLabel("Curso: ");
+        jtfCurso = new JTextField();
+        lbEmail = new JLabel("Email: ");
+        jtfEmail = new JTextField();        
         lbMatUniversidade = new JLabel("Matrícula da Universidade: ");
         jtfMatUniversidade = new JTextField();
         lbNome = new JLabel("Nome: ");
         jtfNome = new JTextField();
         lbCPF = new JLabel("CPF: ");
-        jtfCPF = new JTextField();
+        jtfCPF = new JFormattedTextField(maskCPF);
         lbRG = new JLabel("RG: ");
         jtfRG = new JTextField();
         lbOcupacao = new JLabel("Ocupação: ");
         jtfOcupacao = new JTextField();
         lbStatus = new JLabel("Status: ");
-        jtfStatus = new JTextField();        
+        jtfStatus = new JTextField();
         lbMatAtletica = new JLabel("Matrícula da Atlética: ");
         jtfMatAtletica = new JTextField();
         jtfMatAtletica.setText(String.valueOf(novaMatricula + 1));
         jtfMatAtletica.setEditable(false);
         jtfMatAtletica.setToolTipText("Matrícula escolhida automaticamente. "
                 + "Para editar manualmente, consulte o administrador.");
-        
+
         /**
          * Panel dos botões.
          */
@@ -126,13 +155,13 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
         panelBotoes.add(btCancelar);
         panelBotoes.add(btOk);
         this.add(panelBotoes, BorderLayout.SOUTH);
-        
+
         /**
          * Panel dos dados do membro.
          */
-        panelPrincipal = new JPanel(new MigLayout("fillx"));                
+        panelPrincipal = new JPanel(new MigLayout("fillx"));
         panelPrincipal.add(lbMatAtletica, "split 2");
-        panelPrincipal.add(jtfMatAtletica, "growx, wrap");       
+        panelPrincipal.add(jtfMatAtletica, "growx, wrap");
         panelPrincipal.add(lbMatUniversidade, "split 2");
         panelPrincipal.add(jtfMatUniversidade, "growx, wrap");
         panelPrincipal.add(lbNome, "split 2");
@@ -171,7 +200,7 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
                 }
             }
         });
-        
+
         btCancelar.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {

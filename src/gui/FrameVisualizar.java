@@ -7,6 +7,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -51,12 +52,12 @@ public final class FrameVisualizar extends JFrame implements FrameInterativo {
     private JTextField jtfCPF;
     private JTextField jtfRG;
     private JTextField jtfOcupacao;
-    private JTextField jtfStatus;
+    private JTextField jtfStatus;    
+    private JTextField jtfEmail;    
+    private JTextField jtfCurso;
     private JTextField jtfMembroDesde;
     private JTextField jtfNascimento;
-    private JTextField jtfEmail;
     private JTextField jtfTelefone;
-    private JTextField jtfCurso;
 
     private JLabel lbMatAtl;
     private JLabel lbMatUni;
