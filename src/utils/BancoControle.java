@@ -24,7 +24,7 @@ public class BancoControle {
             props = new Properties();
             props.setProperty("user", user);
             props.setProperty("password", password);
-//            props.setProperty("ssl", ssl.toString());
+            
             Class.forName("org.postgresql.Driver");            
             conn = DriverManager.getConnection(url, props);
         }catch(ClassNotFoundException e){
@@ -124,14 +124,17 @@ public class BancoControle {
         return true;
     }
     
-    public static boolean atualizaMembroVariasColunas(String colunas[], String novos_valores[], String chave){
-        String cmd = "UPDATE TABLE membro SET ";
+    public static boolean atualizaMembroVariasColunas(Membro mbr){
+        String cmd = "UPDATE membro SET " + mbr.toSQLUpdate() 
+                + " WHERE matricula_atletica = '" + mbr.getMatricula_atletica() + "';";
+        System.out.println(cmd);
         
         try(Statement st = conn.createStatement()){
             st.executeUpdate(cmd);
         }catch(SQLException e){
             System.err.println("Erro ao atualizar o membro da tabela!");
             System.err.println("Salvando o log do erro no arquivo de erros...");
+            e.printStackTrace();
             Logs.printLogErro(e);
             return false;
         }
