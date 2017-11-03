@@ -9,10 +9,23 @@ import java.time.format.DateTimeFormatter;
  *
  * @author jjaneto
  */
-public class Membro {
+public class Membro implements Comparable{
     
     public enum STATUS{
-        PAGO, DEVENDO, A_VENCER;
+        PAGO("Pago"), 
+        DEVENDO("Devendo"), 
+        A_VENCER("A vencer");
+        
+        private final String value;
+        
+        private STATUS(String value){
+            this.value = value;
+        }
+        
+        @Override
+        public String toString(){
+            return this.value;
+        }
     }
     
     public enum FIELD{
@@ -54,6 +67,7 @@ public class Membro {
     private String telefone;
     private LocalDate dataNascimento;
     private LocalDate membro_desde;
+    private LocalDate vencimento;
 
     public Membro() {
     }
@@ -190,6 +204,14 @@ public class Membro {
         this.dataNascimento = dataNascimento;
     }
 
+    public LocalDate getVencimento() {
+        return vencimento;
+    }
+
+    public void setVencimento(LocalDate vencimento) {
+        this.vencimento = vencimento;
+    }
+
     public String toSQL() {
         String ret = "(";
         ret += "'" + getMatricula_atletica() + "', ";
@@ -217,6 +239,14 @@ public class Membro {
     @Override
     public String toString(){
         return getMatricula_atletica() + " | " + getNome();
+    }
+    
+    @Override
+    public int compareTo(Object o) {
+        Membro dest = (Membro) o;
+        int matDest = Integer.valueOf(dest.getMatricula_atletica());
+        int myMat = Integer.valueOf(this.getMatricula_atletica());
+        return myMat - matDest;
     }
 
 }
