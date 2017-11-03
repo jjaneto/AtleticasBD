@@ -31,11 +31,13 @@ public class BancoControle {
         }catch(ClassNotFoundException e){
             System.err.println("Erro ao carregar a classe do driver do banco!");
             System.out.println("Salvando o log do erro e encerrando o programa...");
+            e.printStackTrace();
             Logs.printLogErro(e);
             System.exit(0);
         }catch(SQLException ex){
             System.err.println("Erro ao carregar o driver do banco!");
             System.out.println("Salvando o log do erro e encerrando o programa...");
+            ex.printStackTrace();
             Logs.printLogErro(ex);
             System.exit(0);
         }
@@ -89,6 +91,7 @@ public class BancoControle {
             System.err.println("Erro ao procurar o membro na tabela!");
             System.err.println("Salvando o log do erro no arquivo de erros...");
             Logs.printLogErro(e);
+            e.printStackTrace();
             return null;
         }
         return queryResult;
@@ -109,6 +112,7 @@ public class BancoControle {
         }catch(SQLException e){
             System.err.println("Erro ao carregar a tabela!");
             System.err.println("Salvando o log do erro no arquivo de erros...");
+            e.printStackTrace();
             Logs.printLogErro(e);
             return null;
         }
