@@ -21,6 +21,7 @@ public class RendererMembros extends DefaultTableCellRenderer implements TableCe
         setBackground(null);
         super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         setText(String.valueOf(value));
+        setForeground(Color.BLACK);
         if(row % 2 == 0){
             this.setBackground(Color.WHITE);
         }else{

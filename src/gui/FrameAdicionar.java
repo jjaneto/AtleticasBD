@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 import javafx.stage.WindowEvent;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -49,7 +50,7 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
     private JTextField jtfNome;
     private JTextField jtfRG;
     private JTextField jtfOcupacao;
-    private JTextField jtfStatus;
+//    private JTextField jtfStatus;
     private JTextField jtfEmail;
     private JTextField jtfCurso;
     private JFormattedTextField jtfNascimento;
@@ -71,6 +72,8 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
     private MaskFormatter maskCPF;
     private MaskFormatter maskTelefone;
     private MaskFormatter maskNascimento;
+    
+    private JComboBox comboStatus;
     /**
      * Botões.
      */
@@ -97,7 +100,7 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
         atribuiListeners();
 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setMinimumSize(new Dimension(400, 350));
+        setMinimumSize(new Dimension(400, 400));
         setResizable(false);
         setLocationRelativeTo(null);
         setVisible(true);
@@ -116,7 +119,7 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
         btCancelar.setIcon(new ImageIcon("./img/cancel.png"));
 
         try {
-            maskCPF = new MaskFormatter("###.###.###-##");
+            maskCPF = new MaskFormatter("###########");
             maskTelefone = new MaskFormatter("(##)#####-####");
             maskNascimento = new MaskFormatter("##/##/####");
         } catch (ParseException ex) {
@@ -142,7 +145,7 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
         lbOcupacao = new JLabel("Ocupação: ");
         jtfOcupacao = new JTextField();
         lbStatus = new JLabel("Status: ");
-        jtfStatus = new JTextField();
+        comboStatus = new JComboBox(Membro.STATUS.values());
         lbMatAtletica = new JLabel("Matrícula da Atlética: ");
         jtfMatAtletica = new JTextField();
         jtfMatAtletica.setText(String.valueOf(novaMatricula + 1));
@@ -161,9 +164,11 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
         /**
          * Panel dos dados do membro.
          */
-        panelPrincipal = new JPanel(new MigLayout("fillx"));
-        panelPrincipal.add(lbMatAtletica, "split 2");
-        panelPrincipal.add(jtfMatAtletica, "growx, wrap");
+        panelPrincipal = new JPanel(new MigLayout("debug, fillx"));
+        panelPrincipal.add(lbMatAtletica, "split 4");
+        panelPrincipal.add(jtfMatAtletica, "growx");
+        panelPrincipal.add(lbStatus);
+        panelPrincipal.add(comboStatus, "wrap");
         panelPrincipal.add(lbMatUniversidade, "split 2");
         panelPrincipal.add(jtfMatUniversidade, "growx, wrap");
         panelPrincipal.add(lbNome, "split 2");
@@ -174,8 +179,8 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
         panelPrincipal.add(jtfRG, "growx, wrap");
         panelPrincipal.add(lbOcupacao, "split 2");
         panelPrincipal.add(jtfOcupacao, "growx, wrap");
-        panelPrincipal.add(lbStatus, "split 2");
-        panelPrincipal.add(jtfStatus, "growx, wrap");
+//        panelPrincipal.add(lbStatus, "split 2");
+//        panelPrincipal.add(jtfStatus, "growx, wrap");
         panelPrincipal.add(lbEmail, "split 2");
         panelPrincipal.add(jtfEmail, "growx, wrap");
         panelPrincipal.add(lbCurso, "split 2");
@@ -200,7 +205,7 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
                 mbr.setRG(jtfRG.getText());
                 mbr.setMembro_desde(LocalDate.now());
                 mbr.setOcupacao(jtfOcupacao.getText());
-                mbr.setStatus(jtfStatus.getText());
+                mbr.setStatus(comboStatus.getSelectedItem().toString());
                 if (BancoControle.adicionaMembro(mbr)) {
                     JOptionPane.showMessageDialog(getContentPane(),
                             "Adição concluída com sucesso!",
@@ -214,6 +219,8 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
         btCancelar.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                System.out.println(btCancelar.getBounds());
+                System.out.println(e.getXOnScreen()+ " " + e.getYOnScreen());
                 dispose();
             }
         });

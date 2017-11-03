@@ -1,17 +1,20 @@
 package utils;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import javax.swing.table.AbstractTableModel;
 
 /**
  *
  * @author jjaneto
  */
-public class TabelaMembros extends AbstractTableModel {
+public class TabelaMembros extends AbstractTableModel{
 
     public String colunas[] = {"Mat. Atlética",
         "Nome",
-        "Contato",
+        "Telefone",
         "Curso",
         "Status"};
 
@@ -28,6 +31,7 @@ public class TabelaMembros extends AbstractTableModel {
     public TabelaMembros(ArrayList<Membro> arrRows, ArrayList<Membro> arrAux) {
         this.arrRows = arrRows;
         this.arrAux = arrAux;
+        Collections.sort(arrRows);
     }
 
     @Override
@@ -89,6 +93,7 @@ public class TabelaMembros extends AbstractTableModel {
 
     public void removeMembro(Membro mbr) {
         this.arrRows.remove(mbr);
+        this.arrAux.remove(mbr);
         fireTableDataChanged();
     }
 
@@ -118,5 +123,8 @@ public class TabelaMembros extends AbstractTableModel {
     public void limpaArrayAux(){
         this.arrAux.clear();
     }
-
+    
+    public void trocaMembro(int rowIndex, Membro mbr){
+        fireTableRowsUpdated(rowIndex, rowIndex);
+    }
 }

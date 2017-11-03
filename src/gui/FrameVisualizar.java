@@ -5,6 +5,7 @@ import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.ParseException;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
@@ -13,6 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.text.MaskFormatter;
 import net.miginfocom.swing.MigLayout;
 import utils.BancoControle;
 import utils.Membro;
@@ -28,10 +30,10 @@ public final class FrameVisualizar extends JFrame implements FrameInterativo {
     /**
      * Variáveis do Membro passado como parâmetro no construtor.
      */
-    private Membro mbr;
-    private int rowStatus;
-    private int columnStatus;
-    private TabelaMembros model;
+    private final Membro mbr;
+    private final int rowStatus;
+    private final int columnStatus;
+    private final TabelaMembros model;
 
     /**
      * Panels que compõem esse JFrame.
@@ -72,15 +74,21 @@ public final class FrameVisualizar extends JFrame implements FrameInterativo {
     private JLabel lbMembroDesde;
     private JLabel lbNascimento;
     private JLabel lbEmail;
-    private JLabel lbelefone;
+    private JLabel lbTelefone;
     private JLabel lbCurso;
 
+    private MaskFormatter maskCPF;
+    private MaskFormatter maskTelefone;
+    private MaskFormatter maskNascimento;
+    
     /**
      * Array para auxiliar troca de editable.
      */
     private JTextField arrTextField[];
 
-    public FrameVisualizar(TabelaMembros model, Membro mbr, int rowStatus, int columnStatus) throws HeadlessException {
+    public FrameVisualizar(TabelaMembros model, 
+            Membro mbr, int rowStatus, 
+            int columnStatus) throws HeadlessException {
         super("Tela do membro " + mbr.getMatricula_atletica());
         this.mbr = mbr;
         this.rowStatus = rowStatus;
@@ -123,6 +131,7 @@ public final class FrameVisualizar extends JFrame implements FrameInterativo {
         
         lbMatAtl = new JLabel("Matrícula da Atlética: ");
         jtfMatAtl = new JTextField(mbr.getMatricula_atletica());
+        jtfMatAtl.setEditable(false);
         
         lbMatUni = new JLabel("Matrícula da Universidade: ");
         jtfMatUniversidade = new JTextField(mbr.getMatricula_universidade());
@@ -142,9 +151,33 @@ public final class FrameVisualizar extends JFrame implements FrameInterativo {
         lbStatus = new JLabel("Status: ");
         jtfStatus = new JTextField(mbr.getStatus());
         
-        panelDados = new JPanel(new MigLayout("fillx"));
-        panelDados.add(lbMatAtl, "split 2");
-        panelDados.add(jtfMatAtl, "growx, wrap");
+        lbMembroDesde = new JLabel("Membro desde: ");
+        jtfMembroDesde = new JTextField(mbr.getMembro_desde_formatado());
+        jtfMembroDesde.setEditable(false);
+        
+        try {
+            maskCPF = new MaskFormatter("###########");
+            maskTelefone = new MaskFormatter("(##)#####-####");
+            maskNascimento = new MaskFormatter("##/##/####");
+        } catch (ParseException ex) {
+            ex.printStackTrace();
+        }
+        
+        lbNascimento = new JLabel("Nascimento: ");
+        jtfNascimento = new JFormattedTextField(maskNascimento);
+        lbTelefone = new JLabel("Telefone: ");
+        jtfTelefone = new JFormattedTextField(maskTelefone);
+        lbCurso = new JLabel("Curso: ");
+        jtfCurso = new JTextField();
+        lbEmail = new JLabel("Email: ");
+        jtfEmail = new JTextField();
+        
+        panelDados = new JPanel(new MigLayout("debug, fillx"));
+        panelDados.add(lbMatAtl, "split 4");
+        panelDados.add(jtfMatAtl, "growx");
+        panelDados.add(lbMembroDesde);
+        panelDados.add(jtfMembroDesde, "growx, wrap");
+        
         panelDados.add(lbMatUni, "split 2");
         panelDados.add(jtfMatUniversidade, "growx, wrap");
         panelDados.add(lbNome, "split 2");
@@ -156,10 +189,17 @@ public final class FrameVisualizar extends JFrame implements FrameInterativo {
         panelDados.add(lbOcupacao, "split 2");
         panelDados.add(jtfOcupacao, "growx, wrap");
         panelDados.add(lbStatus, "split 2");
-        panelDados.add(jtfStatus, "growx");
+        panelDados.add(jtfStatus, "growx, wrap");
+        panelDados.add(lbEmail, "split 2");
+        panelDados.add(jtfEmail, "growx, wrap");
+        panelDados.add(lbCurso, "split 2");
+        panelDados.add(jtfCurso, "growx, wrap");
+        panelDados.add(lbNascimento, "split 2");
+        panelDados.add(jtfNascimento, "growx, wrap");
+        panelDados.add(lbTelefone, "split 2");
+        panelDados.add(jtfTelefone, "growx");
 
         arrTextField = new JTextField[]{
-            jtfMatAtl,
             jtfMatUniversidade,
             jtfNome,
             jtfCPF,

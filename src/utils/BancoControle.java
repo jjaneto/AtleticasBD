@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Properties;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -48,6 +49,11 @@ public class BancoControle {
             System.err.println("Erro ao adicionar membro na tabela!");
             System.err.println("Salvando o log do erro no arquivo de erros...");
             Logs.printLogErro(e);
+            JOptionPane.showMessageDialog(null, 
+                            "Erro ao adicionar membro ao banco de dados!\n"
+                                    + trataMensagem(e), 
+                            "Erro.", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
             return false;
         }
         return true;
@@ -135,6 +141,10 @@ public class BancoControle {
             System.err.println("Erro ao atualizar o membro da tabela!");
             System.err.println("Salvando o log do erro no arquivo de erros...");
             e.printStackTrace();
+            JOptionPane.showMessageDialog(null, 
+                            "Erro ao adicionar membro ao banco de dados!\n"
+                                    + trataMensagem(e), 
+                            "Erro.", JOptionPane.ERROR_MESSAGE);
             Logs.printLogErro(e);
             return false;
         }
@@ -156,5 +166,20 @@ public class BancoControle {
             Logs.printLogErro(e);            
         }
         return null;
+    }
+    
+    public static String trataMensagem(SQLException e){
+        String ret = "";
+        System.out.println("Mensagem do erro: " + e.getMessage());
+        if(e.getMessage().contains("duplicate key value violates unique constraint")){
+            return "Alguns itens aqui digitados já constam no banco.\n"
+                    + "Verique se todos os dados foram digitados corretamente."
+                    + "Nenhuma alteração no banco de dados foi feita.";
+        }else if(e.getMessage().contains("violates check constraint")){
+            return "Alguns itens aqui digitados não foram digitados corretamente.\n"
+                    + "Verifique se todos foram fornecidos e/ou digitados corretamente.\n"
+                    + "Nenhuma alteração no banco de dados foi feita.";
+        }        
+        return ret;
     }
 }

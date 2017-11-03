@@ -71,7 +71,7 @@ public final class FramePrincipal extends JFrame implements FrameInterativo {
     public FramePrincipal() {
         super("Banco de dados da Atletica das Engenharias - UFS");
         setLayout(new BorderLayout());
-        
+
         instanciaEAdicionaVariaveis();
         atribuiListeners();
 
@@ -83,6 +83,7 @@ public final class FramePrincipal extends JFrame implements FrameInterativo {
     }
 
     public void searchAndGet(String what, Membro.FIELD field) {
+        what = what.toLowerCase();
         model.limpaArrayAux();
         switch (field) {
             case MATRICULA_ATL:
@@ -106,8 +107,7 @@ public final class FramePrincipal extends JFrame implements FrameInterativo {
             case NOME:
                 for (Membro mbr : arrMembros) {
                     String total = mbr.getNome();
-                    String sub = total.substring(0, Math.min(what.length(), total.length() - 1));
-                    if (what.equals(sub)) {
+                    if (total.toLowerCase().contains(what)) {//if (what.equals(sub)) {
                         model.addMembroArrAuxiliar(mbr);
                     }
                 }
@@ -145,8 +145,7 @@ public final class FramePrincipal extends JFrame implements FrameInterativo {
             case CURSO:
                 for (Membro mbr : arrMembros) {
                     String total = mbr.getCurso();
-                    String sub = total.substring(0, Math.min(what.length(), total.length() - 1));
-                    if (what.equals(sub)) {
+                    if (total.contains(what)) {
                         model.addMembroArrAuxiliar(mbr);
                     }
                 }
@@ -249,24 +248,35 @@ public final class FramePrincipal extends JFrame implements FrameInterativo {
             }
         });
 
-        
+        textPesquisa.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == e.VK_ENTER) {
+                    searchAndGet(textPesquisa.getText(), (Membro.FIELD) combo.getSelectedItem());
+                    model.trocaArrayParaAuxiliar();
+                    btReturnTable.setEnabled(true);
+                }
+            }
+        });
+
         textPesquisa.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
-                if(!textPesquisa.getText().equals("Selecione a opção ao lado e digite a pesquisa aqui.")){
+                if (!textPesquisa.getText().equals("Selecione a opção ao lado e digite a pesquisa aqui.")) {
                     btPesquisa.setEnabled(true);
                 }
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                if(textPesquisa.getText().isEmpty())
+                if (textPesquisa.getText().isEmpty()) {
                     btPesquisa.setEnabled(false);
+                }
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-            
+
             }
         });
 
@@ -279,6 +289,16 @@ public final class FramePrincipal extends JFrame implements FrameInterativo {
                         JOptionPane.showMessageDialog(getContentPane(),
                                 "Para essa opção, o resultado será todos os membros"
                                 + " cadastrados a partir da data digitada.",
+                                "Aviso", JOptionPane.INFORMATION_MESSAGE);
+                    } else if (combo.getSelectedItem().equals(Membro.FIELD.NOME)) {
+                        JOptionPane.showMessageDialog(getContentPane(),
+                                "Para essa opção, o resultado será todos os membros"
+                                + " que possuem parte do nome digitado.", "Aviso", 
+                                JOptionPane.INFORMATION_MESSAGE);
+                    } else if (combo.getSelectedItem().equals(Membro.FIELD.CURSO)) {
+                        JOptionPane.showMessageDialog(getContentPane(),
+                                "Para essa opção, o resultado será todos os membros"
+                                + " que possuem parte do nome do curso digitado.",
                                 "Aviso", JOptionPane.INFORMATION_MESSAGE);
                     }
                 }
