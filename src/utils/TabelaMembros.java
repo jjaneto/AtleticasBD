@@ -16,7 +16,7 @@ public class TabelaMembros extends AbstractTableModel{
         "Nome",
         "Telefone",
         "Curso",
-        "Status"};
+        "Status | Vence em"};
 
     private boolean isAux = false;
 
@@ -80,7 +80,7 @@ public class TabelaMembros extends AbstractTableModel{
             case 3:
                 return mbr.getCurso();
             case 4:
-                return mbr.getStatus();
+                return mbr.getStatus() + " | " + mbr.getVencimento();
         }
 
         return null;

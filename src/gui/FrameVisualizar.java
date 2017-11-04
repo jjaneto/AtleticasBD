@@ -6,6 +6,7 @@ import java.awt.HeadlessException;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.ParseException;
+import java.time.LocalDate;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
@@ -149,7 +150,7 @@ public final class FrameVisualizar extends JFrame implements FrameInterativo {
         jtfOcupacao = new JTextField(mbr.getOcupacao());
         
         lbStatus = new JLabel("Status: ");
-        jtfStatus = new JTextField(mbr.getStatus());
+        jtfStatus = new JTextField(mbr.getStatus().toString());
         
         lbMembroDesde = new JLabel("Membro desde: ");
         jtfMembroDesde = new JTextField(mbr.getMembro_desde_formatado());
@@ -165,12 +166,14 @@ public final class FrameVisualizar extends JFrame implements FrameInterativo {
         
         lbNascimento = new JLabel("Nascimento: ");
         jtfNascimento = new JFormattedTextField(maskNascimento);
+        jtfNascimento.setText(mbr.getDataNascimentoFormatado());
         lbTelefone = new JLabel("Telefone: ");
         jtfTelefone = new JFormattedTextField(maskTelefone);
+        jtfTelefone.setText(mbr.getTelefone());
         lbCurso = new JLabel("Curso: ");
-        jtfCurso = new JTextField();
+        jtfCurso = new JTextField(mbr.getCurso());
         lbEmail = new JLabel("Email: ");
-        jtfEmail = new JTextField();
+        jtfEmail = new JTextField(mbr.getEmail());
         
         panelDados = new JPanel(new MigLayout("debug, fillx"));
         panelDados.add(lbMatAtl, "split 4");
@@ -224,9 +227,18 @@ public final class FrameVisualizar extends JFrame implements FrameInterativo {
                 mbr.setNome(jtfNome.getText());
                 mbr.setRG(jtfRG.getText());
                 mbr.setOcupacao(jtfOcupacao.getText());
-                mbr.setStatus(jtfStatus.getText());
-                model.trocaMembro(rowStatus, mbr);
+                if(jtfStatus.getText().equals("Pago")){
+                    mbr.setStatus(Membro.STATUS.PAGO);
+                }else if(jtfStatus.getText().equals("Devendo")){
+                    mbr.setStatus(Membro.STATUS.DEVENDO);
+                }else{
+                    mbr.setStatus(Membro.STATUS.A_VENCER);
+                }
+                mbr.setCurso(jtfCurso.getText());
+                mbr.setTelefone(jtfTelefone.getText());
+                mbr.setEmail(jtfEmail.getText());
                 if(BancoControle.atualizaMembroVariasColunas(mbr)){
+                    model.trocaMembro(rowStatus, mbr);
                     JOptionPane.showMessageDialog(getContentPane(), 
                             "O membro foi atualizado com sucesso.", 
                             "Êxito", JOptionPane.INFORMATION_MESSAGE);

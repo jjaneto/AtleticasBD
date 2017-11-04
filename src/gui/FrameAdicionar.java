@@ -1,7 +1,6 @@
 package gui;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.awt.event.MouseAdapter;
@@ -9,10 +8,6 @@ import java.awt.event.MouseEvent;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javafx.stage.WindowEvent;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -21,7 +16,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.text.MaskFormatter;
 import net.miginfocom.swing.MigLayout;
@@ -94,13 +88,14 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
         super("Adicionar Membro");
         setLayout(new BorderLayout());
         this.model = model;
-        novaMatricula = Integer.valueOf(BancoControle.getMaxMatriculaAtletica());
+        String vlMaxMat = BancoControle.getMaxMatriculaAtletica();
+        novaMatricula = Integer.valueOf(vlMaxMat == null ? "0" : vlMaxMat);
 
         instanciaEAdicionaVariaveis();
         atribuiListeners();
 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setMinimumSize(new Dimension(400, 400));
+        pack();
         setResizable(false);
         setLocationRelativeTo(null);
         setVisible(true);
@@ -205,7 +200,22 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
                 mbr.setRG(jtfRG.getText());
                 mbr.setMembro_desde(LocalDate.now());
                 mbr.setOcupacao(jtfOcupacao.getText());
-                mbr.setStatus(comboStatus.getSelectedItem().toString());
+                if(comboStatus.getSelectedItem() == Membro.STATUS.PAGO){
+                    mbr.setStatus(Membro.STATUS.PAGO);
+                    mbr.setVencimento(LocalDate.now().plusMonths(6));
+                }else if(comboStatus.getSelectedItem() == Membro.STATUS.DEVENDO){
+                    mbr.setStatus(Membro.STATUS.DEVENDO);
+                    mbr.setVencimento(LocalDate.now());
+                }else{
+                    mbr.setStatus(Membro.STATUS.A_VENCER);
+                    mbr.setVencimento(LocalDate.now().plusMonths(1));
+                }
+                mbr.setEmail(jtfEmail.getText());
+                mbr.setDataNascimento(LocalDate.parse(jtfNascimento.getText(), 
+                                        DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+                mbr.setMembro_desde(LocalDate.now());
+                mbr.setCurso(jtfCurso.getText());
+                mbr.setTelefone(jtfTelefone.getText());
                 if (BancoControle.adicionaMembro(mbr)) {
                     JOptionPane.showMessageDialog(getContentPane(),
                             "Adição concluída com sucesso!",

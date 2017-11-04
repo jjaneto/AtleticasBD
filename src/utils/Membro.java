@@ -3,7 +3,9 @@ package utils;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.Period;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 
 /**
  *
@@ -61,13 +63,13 @@ public class Membro implements Comparable{
     private String CPF;
     private String RG;
     private String ocupacao;
-    private String status;
     private String curso;
     private String email;
     private String telefone;
     private LocalDate dataNascimento;
     private LocalDate membro_desde;
     private LocalDate vencimento;
+    private STATUS status;
 
     public Membro() {
     }
@@ -80,19 +82,33 @@ public class Membro implements Comparable{
             this.CPF = st.getString("CPF");
             this.RG = st.getString("RG");
             this.ocupacao = st.getString("ocupacao");
-            this.status = st.getString("status");
-            this.membro_desde = LocalDate.parse(st.getString("membro_desde"),
+            this.email = st.getString("email");
+            this.telefone = st.getString("telefone");
+            this.curso = st.getString("curso");
+            this.membro_desde = LocalDate.parse(st.getString("membro_desde"),   
                                     DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            this.vencimento = LocalDate.parse(st.getString("vencimento"),
+                                    DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            this.dataNascimento = LocalDate.parse(st.getString("nascimento"),
+                                    DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            if(LocalDate.now().isAfter(vencimento)){
+                this.status = STATUS.DEVENDO;
+            }else if(ChronoUnit.DAYS.between(LocalDate.now(), vencimento) <= (long) 30){
+                this.status = STATUS.A_VENCER;
+            }else{
+                this.status = STATUS.PAGO;
+            }
         } catch (SQLException e) {
             System.err.println("Erro ao setar atributo do membro durante sua inicializacao!");
             System.err.println("Salvando o log do erro no arquivo de erros...");
+            e.printStackTrace();
             Logs.printLogEdicao(e, this);
         }
     }
 
     public Membro(String matricula_atletica, String matricula_universidade,
             String nome, String CPF, String RG,
-            String ocupacao, String status, LocalDate membro_desde) {
+            String ocupacao, STATUS status, LocalDate membro_desde) {
         this.matricula_atletica = matricula_atletica;
         this.matricula_universidade = matricula_universidade;
         this.nome = nome;
@@ -151,11 +167,11 @@ public class Membro implements Comparable{
         this.ocupacao = ocupacao;
     }
 
-    public String getStatus() {
+    public STATUS getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(STATUS status) {
         this.status = status;
     }
 
@@ -199,6 +215,11 @@ public class Membro implements Comparable{
     public LocalDate getDataNascimento() {
         return dataNascimento;
     }
+    
+    public String getDataNascimentoFormatado(){
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        return dtf.format(dataNascimento);
+    }
 
     public void setDataNascimento(LocalDate dataNascimento) {
         this.dataNascimento = dataNascimento;
@@ -206,6 +227,11 @@ public class Membro implements Comparable{
 
     public LocalDate getVencimento() {
         return vencimento;
+    }
+    
+    public String getVencimentoFormatado(){
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        return dtf.format(vencimento);
     }
 
     public void setVencimento(LocalDate vencimento) {
@@ -221,7 +247,11 @@ public class Membro implements Comparable{
         ret += "'" + getRG() + "', ";
         ret += "'" + getMembro_desde_formatado()+ "', ";
         ret += "'" + getOcupacao() + "', ";
-        ret += "'" + getStatus() + "')";
+        ret += "'" + getVencimentoFormatado() + "', ";
+        ret += "'" + getCurso() + "', ";
+        ret += "'" + getDataNascimentoFormatado() + "', ";
+        ret += "'" + getTelefone() + "', ";
+        ret += "'" + getEmail() + "')";
         return ret;
     }
     
