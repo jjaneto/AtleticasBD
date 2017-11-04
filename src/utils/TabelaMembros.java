@@ -76,11 +76,11 @@ public class TabelaMembros extends AbstractTableModel{
             case 1:
                 return mbr.getNome();
             case 2:
-                return mbr.getTelefone(); //MUDAR DEPOIS
+                return mbr.getTelefone();
             case 3:
                 return mbr.getCurso();
             case 4:
-                return mbr.getStatus() + " | " + mbr.getVencimento();
+                return mbr.getStatus() + " | " + mbr.getVencimentoFormatado();
         }
 
         return null;
