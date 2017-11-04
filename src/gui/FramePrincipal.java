@@ -140,7 +140,12 @@ public final class FramePrincipal extends JFrame implements FrameInterativo {
                 }
                 break;
             case STATUS:
-
+                for(Membro mbr : arrMembros){
+                    String total = mbr.getStatus().toString().toLowerCase();
+                    if(what.toLowerCase().equals(total)){
+                        model.addMembroArrAuxiliar(mbr);
+                    }
+                }
                 break;
             case CURSO:
                 for (Membro mbr : arrMembros) {
@@ -247,6 +252,17 @@ public final class FramePrincipal extends JFrame implements FrameInterativo {
                 }
             }
         });
+        
+        btPesquisa.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                if(btPesquisa.isEnabled() && e.getKeyCode() == e.VK_ENTER){
+                    searchAndGet(textPesquisa.getText(), (Membro.FIELD) combo.getSelectedItem());
+                    model.trocaArrayParaAuxiliar();
+                    btReturnTable.setEnabled(true);
+                }
+            }
+        });
 
         textPesquisa.addKeyListener(new KeyAdapter() {
             @Override
@@ -255,6 +271,7 @@ public final class FramePrincipal extends JFrame implements FrameInterativo {
                     searchAndGet(textPesquisa.getText(), (Membro.FIELD) combo.getSelectedItem());
                     model.trocaArrayParaAuxiliar();
                     btReturnTable.setEnabled(true);
+                    btPesquisa.requestFocus();
                 }
             }
         });
@@ -293,12 +310,17 @@ public final class FramePrincipal extends JFrame implements FrameInterativo {
                     } else if (combo.getSelectedItem().equals(Membro.FIELD.NOME)) {
                         JOptionPane.showMessageDialog(getContentPane(),
                                 "Para essa opção, o resultado será todos os membros"
-                                + " que possuem parte do nome digitado.", "Aviso", 
+                                + " que possuem parte do nome digitado.", "Aviso",
                                 JOptionPane.INFORMATION_MESSAGE);
                     } else if (combo.getSelectedItem().equals(Membro.FIELD.CURSO)) {
                         JOptionPane.showMessageDialog(getContentPane(),
                                 "Para essa opção, o resultado será todos os membros"
                                 + " que possuem parte do nome do curso digitado.",
+                                "Aviso", JOptionPane.INFORMATION_MESSAGE);
+                    } else if (combo.getSelectedItem().equals(Membro.FIELD.STATUS)) {
+                        JOptionPane.showMessageDialog(getContentPane(), 
+                                "Para essa opção, o resultado será todos os membros"
+                                        + " que a pesquisa digitada possuem status igual.",
                                 "Aviso", JOptionPane.INFORMATION_MESSAGE);
                     }
                 }
