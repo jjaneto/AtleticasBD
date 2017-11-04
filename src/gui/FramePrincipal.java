@@ -106,8 +106,8 @@ public final class FramePrincipal extends JFrame implements FrameInterativo {
                 break;
             case NOME:
                 for (Membro mbr : arrMembros) {
-                    String total = mbr.getNome();
-                    if (total.toLowerCase().contains(what)) {//if (what.equals(sub)) {
+                    String total = mbr.getNome().toLowerCase();
+                    if (total.contains(what.toLowerCase())) {//if (what.equals(sub)) {
                         model.addMembroArrAuxiliar(mbr);
                     }
                 }
@@ -132,9 +132,9 @@ public final class FramePrincipal extends JFrame implements FrameInterativo {
                 break;
             case OCUPACAO:
                 for (Membro mbr : arrMembros) {
-                    String total = mbr.getOcupacao();
+                    String total = mbr.getOcupacao().toLowerCase();
                     String sub = total.substring(0, Math.min(what.length(), total.length() - 1));
-                    if (what.equals(sub)) {
+                    if (what.toLowerCase().equals(sub)) {
                         model.addMembroArrAuxiliar(mbr);
                     }
                 }
@@ -144,8 +144,8 @@ public final class FramePrincipal extends JFrame implements FrameInterativo {
                 break;
             case CURSO:
                 for (Membro mbr : arrMembros) {
-                    String total = mbr.getCurso();
-                    if (total.contains(what)) {
+                    String total = mbr.getCurso().toLowerCase();
+                    if (total.contains(what.toLowerCase())) {
                         model.addMembroArrAuxiliar(mbr);
                     }
                 }
@@ -161,9 +161,9 @@ public final class FramePrincipal extends JFrame implements FrameInterativo {
                 break;
             case EMAIL:
                 for (Membro mbr : arrMembros) {
-                    String total = mbr.getEmail();
+                    String total = mbr.getEmail().toLowerCase();
                     String sub = total.substring(0, Math.min(what.length(), total.length() - 1));
-                    if (what.equals(sub)) {
+                    if (what.toLowerCase().equals(sub)) {
                         model.addMembroArrAuxiliar(mbr);
                     }
                 }
