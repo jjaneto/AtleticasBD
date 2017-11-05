@@ -58,8 +58,8 @@ public final class FrameVisualizar extends JFrame implements FrameInterativo {
     private JTextField jtfCPF;
     private JTextField jtfRG;
     private JTextField jtfOcupacao;
-    private JTextField jtfStatus;    
-    private JTextField jtfEmail;    
+    private JTextField jtfStatus;
+    private JTextField jtfEmail;
     private JTextField jtfCurso;
     private JTextField jtfMembroDesde;
     private JTextField jtfNascimento;
@@ -81,14 +81,14 @@ public final class FrameVisualizar extends JFrame implements FrameInterativo {
     private MaskFormatter maskCPF;
     private MaskFormatter maskTelefone;
     private MaskFormatter maskNascimento;
-    
+
     /**
      * Array para auxiliar troca de editable.
      */
     private JTextField arrTextField[];
 
-    public FrameVisualizar(TabelaMembros model, 
-            Membro mbr, int rowStatus, 
+    public FrameVisualizar(TabelaMembros model,
+            Membro mbr, int rowStatus,
             int columnStatus) throws HeadlessException {
         super("Tela do membro " + mbr.getMatricula_atletica());
         this.mbr = mbr;
@@ -98,10 +98,10 @@ public final class FrameVisualizar extends JFrame implements FrameInterativo {
 
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout());
-        
+
         instanciaEAdicionaVariaveis();
         atribuiListeners();
-        
+
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
@@ -129,33 +129,33 @@ public final class FrameVisualizar extends JFrame implements FrameInterativo {
         panelBotoes.add(btEditar);
         panelBotoes.add(btFechar);
         this.add(panelBotoes, BorderLayout.SOUTH);
-        
+
         lbMatAtl = new JLabel("Matrícula da Atlética: ");
         jtfMatAtl = new JTextField(mbr.getMatricula_atletica());
         jtfMatAtl.setEditable(false);
-        
+
         lbMatUni = new JLabel("Matrícula da Universidade: ");
         jtfMatUniversidade = new JTextField(mbr.getMatricula_universidade());
-        
+
         lbNome = new JLabel("Nome: ");
         jtfNome = new JTextField(mbr.getNome());
-        
+
         lbCPF = new JLabel("CPF: ");
         jtfCPF = new JTextField(mbr.getCPF());
-        
+
         lbRG = new JLabel("RG: ");
         jtfRG = new JTextField(mbr.getRG());
-        
+
         lbOcupacao = new JLabel("Ocupação: ");
         jtfOcupacao = new JTextField(mbr.getOcupacao());
-        
+
         lbStatus = new JLabel("Status: ");
         jtfStatus = new JTextField(mbr.getStatus().toString());
-        
+
         lbMembroDesde = new JLabel("Membro desde: ");
         jtfMembroDesde = new JTextField(mbr.getMembro_desde_formatado());
         jtfMembroDesde.setEditable(false);
-        
+
         try {
             maskCPF = new MaskFormatter("###########");
             maskTelefone = new MaskFormatter("(##)#####-####");
@@ -163,7 +163,7 @@ public final class FrameVisualizar extends JFrame implements FrameInterativo {
         } catch (ParseException ex) {
             ex.printStackTrace();
         }
-        
+
         lbNascimento = new JLabel("Nascimento: ");
         jtfNascimento = new JFormattedTextField(maskNascimento);
         jtfNascimento.setText(mbr.getDataNascimentoFormatado());
@@ -174,13 +174,13 @@ public final class FrameVisualizar extends JFrame implements FrameInterativo {
         jtfCurso = new JTextField(mbr.getCurso());
         lbEmail = new JLabel("Email: ");
         jtfEmail = new JTextField(mbr.getEmail());
-        
+
         panelDados = new JPanel(new MigLayout("debug, fillx"));
         panelDados.add(lbMatAtl, "split 4");
         panelDados.add(jtfMatAtl, "growx");
         panelDados.add(lbMembroDesde);
         panelDados.add(jtfMembroDesde, "growx, wrap");
-        
+
         panelDados.add(lbMatUni, "split 2");
         panelDados.add(jtfMatUniversidade, "growx, wrap");
         panelDados.add(lbNome, "split 2");
@@ -225,34 +225,35 @@ public final class FrameVisualizar extends JFrame implements FrameInterativo {
         btSalvar.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                mbr.setCPF(jtfCPF.getText());
-                mbr.setMatricula_atletica(jtfMatAtl.getText());
-                mbr.setMatricula_universidade(jtfMatUniversidade.getText());
-                mbr.setNome(jtfNome.getText());
-                mbr.setRG(jtfRG.getText());
-                mbr.setOcupacao(jtfOcupacao.getText());
-                if(jtfStatus.getText().equals("Pago")){
-                    mbr.setStatus(Membro.STATUS.PAGO);
-                }else if(jtfStatus.getText().equals("Devendo")){
-                    mbr.setStatus(Membro.STATUS.DEVENDO);
-                }else{
-                    mbr.setStatus(Membro.STATUS.A_VENCER);
+                if (btSalvar.isEnabled()) {
+                    mbr.setCPF(jtfCPF.getText());
+                    mbr.setMatricula_atletica(jtfMatAtl.getText());
+                    mbr.setMatricula_universidade(jtfMatUniversidade.getText());
+                    mbr.setNome(jtfNome.getText());
+                    mbr.setRG(jtfRG.getText());
+                    mbr.setOcupacao(jtfOcupacao.getText());
+                    if(jtfStatus.getText().equals("Pago")){
+                        mbr.setStatus(Membro.STATUS.PAGO);
+                    }else if(jtfStatus.getText().equals("Devendo")){
+                        mbr.setStatus(Membro.STATUS.DEVENDO);
+                    }else{
+                        mbr.setStatus(Membro.STATUS.A_VENCER);
+                    }
+                    mbr.setCurso(jtfCurso.getText());
+                    mbr.setTelefone(jtfTelefone.getText());
+                    mbr.setEmail(jtfEmail.getText());
+                    if(BancoControle.atualizaMembroVariasColunas(mbr)){
+                        model.trocaMembro(rowStatus, mbr);
+                        JOptionPane.showMessageDialog(getContentPane(),
+                                "O membro foi atualizado com sucesso.",
+                                "Êxito", JOptionPane.INFORMATION_MESSAGE);
+                        dispose();
+                    }else{
+                        JOptionPane.showMessageDialog(getContentPane(),
+                                "Erro ao atualizar o membro.",
+                                "Erro!", JOptionPane.ERROR_MESSAGE);
+                    }
                 }
-                mbr.setCurso(jtfCurso.getText());
-                mbr.setTelefone(jtfTelefone.getText());
-                mbr.setEmail(jtfEmail.getText());
-                if(BancoControle.atualizaMembroVariasColunas(mbr)){
-                    model.trocaMembro(rowStatus, mbr);
-                    JOptionPane.showMessageDialog(getContentPane(), 
-                            "O membro foi atualizado com sucesso.", 
-                            "Êxito", JOptionPane.INFORMATION_MESSAGE);
-                    dispose();
-                }else{
-                    JOptionPane.showMessageDialog(getContentPane(), 
-                            "Erro ao atualizar o membro.", 
-                            "Erro!", JOptionPane.ERROR_MESSAGE);
-                }
-                
             }
         });
 
