@@ -208,7 +208,11 @@ public final class FrameVisualizar extends JFrame implements FrameInterativo {
             jtfCPF,
             jtfRG,
             jtfOcupacao,
-            jtfStatus};
+            jtfStatus,
+            jtfEmail,
+            jtfTelefone,
+            jtfCurso,
+            jtfNascimento};
 
         setEditableTextFields(false);
 
