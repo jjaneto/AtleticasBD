@@ -56,6 +56,23 @@ public class Membro implements Comparable{
             return this.value;
         }
     }
+    
+    public enum MODALIDADE{
+        ANUAL("Anual"),
+        SEMESTRAL("Semestral"),
+        NAO_DEFINIDO("Não definida");
+
+        private final String value;
+        
+        private MODALIDADE(String value) {
+            this.value = value;
+        }
+        
+        @Override
+        public String toString(){
+            return this.value;
+        }            
+    }
 
     private String matricula_atletica;
     private String matricula_universidade;
@@ -70,6 +87,7 @@ public class Membro implements Comparable{
     private LocalDate membro_desde;
     private LocalDate vencimento;
     private STATUS status;
+    private MODALIDADE modalidade;
 
     public Membro() {
     }
@@ -236,6 +254,14 @@ public class Membro implements Comparable{
 
     public void setVencimento(LocalDate vencimento) {
         this.vencimento = vencimento;
+    }
+
+    public MODALIDADE getModalidade() {
+        return modalidade;
+    }
+
+    public void setModalidade(MODALIDADE modalidade) {
+        this.modalidade = modalidade;
     }
 
     public String toSQL() {
