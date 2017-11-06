@@ -1,2 +1,4 @@
 *~
 /build/
+*_err
+*_out
