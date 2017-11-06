@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.awt.event.MouseAdapter;
@@ -8,6 +9,7 @@ import java.awt.event.MouseEvent;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -19,6 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.text.MaskFormatter;
+import net.miginfocom.layout.CC;
 import net.miginfocom.swing.MigLayout;
 import utils.BancoControle;
 import utils.Membro;
@@ -47,6 +50,7 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
     private JTextField jtfOcupacao;
     private JTextField jtfEmail;
     private JTextField jtfCurso;
+    private JTextField jtfNextVenc;
     private JFormattedTextField jtfNascimento;
     private JFormattedTextField jtfCPF;
     private JFormattedTextField jtfTelefone;
@@ -63,6 +67,8 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
     private JLabel lbCurso;
     private JLabel lbNascimento;
     private JLabel lbPlano;
+    private JLabel lbModalidade;
+    private JLabel lbNextVenc;
 
     private MaskFormatter maskCPF;
     private MaskFormatter maskTelefone;
@@ -77,6 +83,8 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
      */
     private JButton btOk;
     private JButton btCancelar;
+    private JButton btDoubt;
+    
 
     /**
      * Tabela principal.
@@ -100,7 +108,7 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         pack();
-        setResizable(false);
+//        setResizable(false);
         setLocationRelativeTo(null);
         setVisible(true);
         btCancelar.requestFocus();
@@ -145,6 +153,7 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
         jtfOcupacao = new JTextField();
         lbStatus = new JLabel("Status: ");
         comboStatus = new JComboBox(Membro.STATUS.values());
+        comboStatus.setSelectedItem(Membro.STATUS.DEVENDO);
         lbMatAtletica = new JLabel("Matrícula da Atlética: ");
         jtfMatAtletica = new JTextField();
         jtfMatAtletica.setText(String.valueOf(novaMatricula + 1));
@@ -154,8 +163,18 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
         
         lbPlano = new JLabel("Plano:");
         rbAnual = new JRadioButton("Anual");
+        rbAnual.setEnabled(false);
         rbSemestral = new JRadioButton("Semestral");
-
+        rbSemestral.setEnabled(false);
+        
+        lbPlano = new JLabel("Plano de Associação");
+        btDoubt = new JButton("?");
+        lbNextVenc = new JLabel("Próximo Vencimento");
+        lbModalidade = new JLabel("Modalidade: ");
+        jtfNextVenc = new JTextField(LocalDate.now().
+                format(DateTimeFormatter.ofPattern("dd/MM/YYYY")));
+        jtfNextVenc.setEditable(false);
+        jtfNextVenc.setForeground(Color.LIGHT_GRAY);
         /**
          * Panel dos botões.
          */
@@ -168,35 +187,39 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
          * Panel dos dados do membro.
          */
         panelPrincipal = new JPanel(new MigLayout("debug, fillx"));
-        panelPrincipal.add(lbMatAtletica, "split 4");
-        panelPrincipal.add(jtfMatAtletica, "growx");
-        panelPrincipal.add(lbStatus);
-        panelPrincipal.add(comboStatus, "wrap");
+        JLabel lbAtletica = new JLabel("Dados Atlética");
+        panelPrincipal.add(lbAtletica, new CC().alignX("center").spanX());
+        panelPrincipal.add(lbMatAtletica, "split 2");
+        panelPrincipal.add(jtfMatAtletica, "growx, wrap");
+        panelPrincipal.add(lbOcupacao, "split 2");
+        panelPrincipal.add(jtfOcupacao, "growx, wrap");
+        JLabel lbPessoa = new JLabel("Dados Pessoa");
+        panelPrincipal.add(lbPessoa, new CC().alignX("center").spanX());
         panelPrincipal.add(lbMatUniversidade, "split 2");
         panelPrincipal.add(jtfMatUniversidade, "growx, wrap");
         panelPrincipal.add(lbNome, "split 2");
         panelPrincipal.add(jtfNome, "growx, wrap");
-        panelPrincipal.add(lbCPF, "split 2");
-        panelPrincipal.add(jtfCPF, "growx, wrap");
-        panelPrincipal.add(lbRG, "split 2");
+        panelPrincipal.add(lbCPF, "split 4");
+        panelPrincipal.add(jtfCPF, "growx");
+        panelPrincipal.add(lbRG);
         panelPrincipal.add(jtfRG, "growx, wrap");
-        panelPrincipal.add(lbOcupacao, "split 2");
-        panelPrincipal.add(jtfOcupacao, "growx, wrap");
-//        panelPrincipal.add(lbStatus, "split 2");
-//        panelPrincipal.add(jtfStatus, "growx, wrap");
         panelPrincipal.add(lbEmail, "split 2");
         panelPrincipal.add(jtfEmail, "growx, wrap");
         panelPrincipal.add(lbCurso, "split 2");
         panelPrincipal.add(jtfCurso, "growx, wrap");
-        panelPrincipal.add(lbNascimento, "split 2");
-        panelPrincipal.add(jtfNascimento, "growx, wrap");
-        panelPrincipal.add(lbTelefone, "split 2");
-        panelPrincipal.add(jtfTelefone, "growx, wrap");
-//        JLabel lbFrase = new JLabel("Vencimento");
-//        panelPrincipal.add(lbFrase, "growx, wrap");
-//        panelPrincipal.add(lbPlano, "split 3");
-//        panelPrincipal.add(rbSemestral);
-//        panelPrincipal.add(rbAnual, "wrap");
+        panelPrincipal.add(lbNascimento, "split 4");
+        panelPrincipal.add(jtfNascimento, "growx");
+        panelPrincipal.add(lbTelefone);
+        panelPrincipal.add(jtfTelefone, "growx, wrap");        
+        panelPrincipal.add(lbPlano, new CC().alignX("center").spanX());
+        panelPrincipal.add(lbStatus, "split 3");
+        panelPrincipal.add(comboStatus, "growx");       
+        panelPrincipal.add(btDoubt, "growx, wrap");       
+        panelPrincipal.add(lbModalidade, "split 3");
+        panelPrincipal.add(rbAnual);
+        panelPrincipal.add(rbSemestral, "wrap");        
+        panelPrincipal.add(lbNextVenc, "split 2");
+        panelPrincipal.add(jtfNextVenc, "growx, wrap");
         this.add(panelPrincipal, BorderLayout.CENTER);
     }
 
@@ -243,6 +266,26 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
             @Override
             public void mouseClicked(MouseEvent e) {
                 dispose();
+            }
+        });
+        
+        rbAnual.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if(rbSemestral.isSelected()){
+                    rbSemestral.setSelected(false);
+                    
+                }
+            }
+        });
+        
+        rbSemestral.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if(rbAnual.isSelected()){
+                    rbAnual.setSelected(false);
+                    
+                }
             }
         });
     }
