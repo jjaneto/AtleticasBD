@@ -2,6 +2,7 @@ package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.awt.event.ItemEvent;
@@ -109,8 +110,9 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
         atribuiListeners();
 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        pack();
-//        setResizable(false);
+        setMinimumSize(new Dimension(400, 470));
+//        pack();
+        setResizable(false);
         setLocationRelativeTo(null);
         setVisible(true);
         btCancelar.requestFocus();
@@ -238,22 +240,31 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
                 mbr.setRG(jtfRG.getText());
                 mbr.setMembro_desde(LocalDate.now());
                 mbr.setOcupacao(jtfOcupacao.getText());
-                if(comboStatus.getSelectedItem() == Membro.STATUS.PAGO){
-                    mbr.setStatus(Membro.STATUS.PAGO);
-                    mbr.setVencimento(LocalDate.now().plusMonths(6));
-                }else if(comboStatus.getSelectedItem() == Membro.STATUS.DEVENDO){
-                    mbr.setStatus(Membro.STATUS.DEVENDO);
-                    mbr.setVencimento(LocalDate.now());
-                }else{
-                    mbr.setStatus(Membro.STATUS.A_VENCER);
-                    mbr.setVencimento(LocalDate.now().plusMonths(1));
-                }
-                mbr.setEmail(jtfEmail.getText());
                 mbr.setDataNascimento(LocalDate.parse(jtfNascimento.getText(), 
                                         DateTimeFormatter.ofPattern("dd/MM/yyyy")));
                 mbr.setMembro_desde(LocalDate.now());
                 mbr.setCurso(jtfCurso.getText());
                 mbr.setTelefone(jtfTelefone.getText());
+                mbr.setEmail(jtfEmail.getText());                
+                
+                if(comboStatus.getSelectedItem() == Membro.STATUS.PAGO){
+                    mbr.setStatus(Membro.STATUS.PAGO);                    
+                    if(rbAnual.isSelected()){
+                        mbr.setModalidade(Membro.MODALIDADE.ANUAL);
+                        mbr.setVencimento(LocalDate.now().plusYears(1));
+                    }else{
+                        mbr.setModalidade(Membro.MODALIDADE.SEMESTRAL);
+                        mbr.setVencimento(LocalDate.now().plusMonths(6));
+                    }
+                }else if(comboStatus.getSelectedItem() == Membro.STATUS.DEVENDO){
+                    mbr.setStatus(Membro.STATUS.DEVENDO);
+                    mbr.setVencimento(LocalDate.now());
+                    mbr.setModalidade(Membro.MODALIDADE.NAO_DEFINIDO);
+                }else{
+                    mbr.setStatus(Membro.STATUS.A_VENCER);
+                    mbr.setVencimento(LocalDate.now().plusMonths(1));
+                    mbr.setModalidade(Membro.MODALIDADE.NAO_DEFINIDO);
+                }             
                 if (BancoControle.adicionaMembro(mbr)) {
                     JOptionPane.showMessageDialog(getContentPane(),
                             "Adição concluída com sucesso!",
@@ -274,26 +285,32 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
         rbAnual.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if(rbSemestral.isSelected()){
-                    rbSemestral.setSelected(false);
-                    jtfNextVenc.setText(LocalDate
-                            .now()
-                            .plusYears(1)
-                            .format(DateTimeFormatter.ofPattern("dd/MM/YYYY")));
-                }
+                rbAnual.setSelected(true);
+                rbSemestral.setSelected(false);
+                jtfNextVenc.setText(LocalDate
+                        .now()
+                        .plusYears(1)
+                        .format(DateTimeFormatter.ofPattern("dd/MM/YYYY")));
+
             }
         });
         
         rbSemestral.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if(rbAnual.isSelected()){
-                    rbAnual.setSelected(false);
-                    jtfNextVenc.setText(LocalDate
-                            .now()
-                            .plusMonths(6)
-                            .format(DateTimeFormatter.ofPattern("dd/MM/YYYY")));
-                }
+                rbSemestral.setSelected(true);
+                rbAnual.setSelected(false);
+                jtfNextVenc.setText(LocalDate
+                        .now()
+                        .plusMonths(6)
+                        .format(DateTimeFormatter.ofPattern("dd/MM/YYYY")));
+            }
+        });
+        
+        btDoubt.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                
             }
         });
         
@@ -302,6 +319,10 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
             public void itemStateChanged(ItemEvent e) {
                 if(e.getStateChange() == ItemEvent.SELECTED){
                     if(comboStatus.getSelectedItem() == Membro.STATUS.A_VENCER){
+                        rbAnual.setSelected(false);
+                        rbAnual.setEnabled(false);
+                        rbSemestral.setSelected(false);
+                        rbSemestral.setEnabled(false);
                         LocalDate aMonth = LocalDate.now().plusMonths(1);
                         jtfNextVenc.setText(aMonth.format(DateTimeFormatter
                                                 .ofPattern("dd/MM/YYYY")));
