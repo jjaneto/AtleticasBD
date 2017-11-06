@@ -14,6 +14,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.text.MaskFormatter;
 import net.miginfocom.swing.MigLayout;
@@ -81,7 +82,10 @@ public final class FrameVisualizar extends JFrame implements FrameInterativo {
     private MaskFormatter maskCPF;
     private MaskFormatter maskTelefone;
     private MaskFormatter maskNascimento;
-
+    
+    private JRadioButton rbAnual;
+    private JRadioButton rbSemestral;
+    
     /**
      * Array para auxiliar troca de editable.
      */
@@ -174,6 +178,9 @@ public final class FrameVisualizar extends JFrame implements FrameInterativo {
         jtfCurso = new JTextField(mbr.getCurso());
         lbEmail = new JLabel("Email: ");
         jtfEmail = new JTextField(mbr.getEmail());
+        
+        rbAnual = new JRadioButton("Anual");
+        rbSemestral = new JRadioButton("Semestral");
 
         panelDados = new JPanel(new MigLayout("debug, fillx"));
         panelDados.add(lbMatAtl, "split 4");
@@ -264,6 +271,7 @@ public final class FrameVisualizar extends JFrame implements FrameInterativo {
                     btSalvar.setEnabled(true);
                     setEditableTextFields(true);
                     jtfMatUniversidade.requestFocus();
+                    btEditar.setEnabled(false);
                 }
             }
         });

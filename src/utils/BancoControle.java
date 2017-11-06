@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Properties;
 import javax.swing.JOptionPane;
@@ -45,6 +46,7 @@ public class BancoControle {
     
     public static boolean adicionaMembro(Membro membro){
         String cmd = "INSERT INTO membro VALUES " + membro.toSQL() + ";";
+        System.out.println("[" + LocalDate.now() + ":COMANDO adiciona] " + cmd);
         try(Statement st = conn.createStatement()){            
             st.executeUpdate(cmd);
         }catch(SQLException e){
@@ -64,7 +66,7 @@ public class BancoControle {
     public static boolean removeMembro(Membro membro){
         String cmd = "DELETE FROM membro WHERE matricula_atletica = '" 
                 + membro.getMatricula_atletica() + "';";
-        System.out.println(cmd);
+        System.out.println("[" + LocalDate.now() + ":COMANDO remove] " + cmd);
         try(Statement st = conn.createStatement()){
             st.executeUpdate(cmd);
         }catch(SQLException e){
@@ -79,6 +81,8 @@ public class BancoControle {
     
     public static ArrayList<Membro> procuraMembro(String coluna, String txt){
         String cmd = "SELECT * FROM membro WHERE " + coluna + " = " + txt;
+        System.out.println("[" + LocalDate.now() + ":COMANDO procura] " + cmd);
+        
         ArrayList<Membro> queryResult = null;
         
         try(Statement st = conn.createStatement();
@@ -99,6 +103,7 @@ public class BancoControle {
     
     public static ArrayList<Membro> carregaTabela(){
         String cmd = "SELECT * FROM membro";
+        System.out.println("[" + LocalDate.now() + ":COMANDO carrega tabela] " + cmd);
         ArrayList<Membro> queryResult = null;
         
         try(Statement st = conn.createStatement();
@@ -123,6 +128,8 @@ public class BancoControle {
         String cmd = "UPDATE TABLE membro SET " + coluna + " = " + novo_valor +
                      " WHERE " + coluna + " = " + valor_antigo;
         
+        System.out.println("[" + LocalDate.now() + ":COMANDO atualiza coluna de linha] " + cmd);
+        
         try(Statement st = conn.createStatement()){
             st.executeUpdate(cmd);
         }catch(SQLException e){
@@ -136,8 +143,9 @@ public class BancoControle {
     
     public static boolean atualizaMembroVariasColunas(Membro mbr){
         String cmd = "UPDATE membro SET " + mbr.toSQLUpdate() 
-                + " WHERE matricula_atletica = '" + mbr.getMatricula_atletica() + "';";
-        System.out.println(cmd);
+                + " WHERE matricula_atletica = '" + mbr.getMatricula_atletica() + "';";        
+        
+        System.out.println("[" + LocalDate.now() + ":COMANDO atualiza cliente] " + cmd);
         
         try(Statement st = conn.createStatement()){
             st.executeUpdate(cmd);
@@ -157,6 +165,9 @@ public class BancoControle {
     
     public static String getMaxMatriculaAtletica(){
         String cmd = "SELECT max(matricula_atletica) FROM membro;";
+        
+        System.out.println("[" + LocalDate.now() + ":COMANDO ultima matricula] " + cmd);
+        
         try(Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery(cmd)  ){
             

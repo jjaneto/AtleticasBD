@@ -16,6 +16,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.text.MaskFormatter;
 import net.miginfocom.swing.MigLayout;
@@ -44,7 +45,6 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
     private JTextField jtfNome;
     private JTextField jtfRG;
     private JTextField jtfOcupacao;
-//    private JTextField jtfStatus;
     private JTextField jtfEmail;
     private JTextField jtfCurso;
     private JFormattedTextField jtfNascimento;
@@ -62,12 +62,16 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
     private JLabel lbTelefone;
     private JLabel lbCurso;
     private JLabel lbNascimento;
+    private JLabel lbPlano;
 
     private MaskFormatter maskCPF;
     private MaskFormatter maskTelefone;
     private MaskFormatter maskNascimento;
     
     private JComboBox comboStatus;
+    
+    private JRadioButton rbAnual;
+    private JRadioButton rbSemestral;
     /**
      * Botões.
      */
@@ -147,6 +151,10 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
         jtfMatAtletica.setEditable(false);
         jtfMatAtletica.setToolTipText("Matrícula escolhida automaticamente. "
                 + "Para editar manualmente, consulte o administrador.");
+        
+        lbPlano = new JLabel("Plano:");
+        rbAnual = new JRadioButton("Anual");
+        rbSemestral = new JRadioButton("Semestral");
 
         /**
          * Panel dos botões.
@@ -183,7 +191,12 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
         panelPrincipal.add(lbNascimento, "split 2");
         panelPrincipal.add(jtfNascimento, "growx, wrap");
         panelPrincipal.add(lbTelefone, "split 2");
-        panelPrincipal.add(jtfTelefone, "growx");
+        panelPrincipal.add(jtfTelefone, "growx, wrap");
+//        JLabel lbFrase = new JLabel("Vencimento");
+//        panelPrincipal.add(lbFrase, "growx, wrap");
+//        panelPrincipal.add(lbPlano, "split 3");
+//        panelPrincipal.add(rbSemestral);
+//        panelPrincipal.add(rbAnual, "wrap");
         this.add(panelPrincipal, BorderLayout.CENTER);
     }
 
@@ -229,8 +242,6 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
         btCancelar.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                System.out.println(btCancelar.getBounds());
-                System.out.println(e.getXOnScreen()+ " " + e.getYOnScreen());
                 dispose();
             }
         });

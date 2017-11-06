@@ -107,7 +107,7 @@ public final class FramePrincipal extends JFrame implements FrameInterativo {
             case NOME:
                 for (Membro mbr : arrMembros) {
                     String total = mbr.getNome().toLowerCase();
-                    if (total.contains(what.toLowerCase())) {//if (what.equals(sub)) {
+                    if (total.contains(what)) {
                         model.addMembroArrAuxiliar(mbr);
                     }
                 }
@@ -134,7 +134,7 @@ public final class FramePrincipal extends JFrame implements FrameInterativo {
                 for (Membro mbr : arrMembros) {
                     String total = mbr.getOcupacao().toLowerCase();
                     String sub = total.substring(0, Math.min(what.length(), total.length() - 1));
-                    if (what.toLowerCase().equals(sub)) {
+                    if (what.contains(sub)) {
                         model.addMembroArrAuxiliar(mbr);
                     }
                 }
@@ -142,7 +142,7 @@ public final class FramePrincipal extends JFrame implements FrameInterativo {
             case STATUS:
                 for(Membro mbr : arrMembros){
                     String total = mbr.getStatus().toString().toLowerCase();
-                    if(what.toLowerCase().equals(total)){
+                    if(what.equals(total)){
                         model.addMembroArrAuxiliar(mbr);
                     }
                 }
@@ -150,7 +150,7 @@ public final class FramePrincipal extends JFrame implements FrameInterativo {
             case CURSO:
                 for (Membro mbr : arrMembros) {
                     String total = mbr.getCurso().toLowerCase();
-                    if (total.contains(what.toLowerCase())) {
+                    if (total.contains(what)) {
                         model.addMembroArrAuxiliar(mbr);
                     }
                 }
@@ -168,7 +168,7 @@ public final class FramePrincipal extends JFrame implements FrameInterativo {
                 for (Membro mbr : arrMembros) {
                     String total = mbr.getEmail().toLowerCase();
                     String sub = total.substring(0, Math.min(what.length(), total.length() - 1));
-                    if (what.toLowerCase().equals(sub)) {
+                    if (what.equals(sub)) {
                         model.addMembroArrAuxiliar(mbr);
                     }
                 }
@@ -178,7 +178,7 @@ public final class FramePrincipal extends JFrame implements FrameInterativo {
                     LocalDate dateMembro = mbr.getDataNascimento();
                     LocalDate diaPesquisado = LocalDate.parse(what, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
                     if (dateMembro.isEqual(diaPesquisado)) {
-                        arrMembros.add(mbr);
+                        model.addMembroArrAuxiliar(mbr);
                     }
                 }
                 break;
@@ -187,7 +187,7 @@ public final class FramePrincipal extends JFrame implements FrameInterativo {
                     LocalDate dateMembro = mbr.getMembro_desde();
                     LocalDate diaPesquisado = LocalDate.parse(what, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
                     if (dateMembro.isAfter(diaPesquisado) || dateMembro.isEqual(diaPesquisado)) {
-                        arrMembros.add(mbr);
+                        model.addMembroArrAuxiliar(mbr);
                     }
                 }
                 break;
