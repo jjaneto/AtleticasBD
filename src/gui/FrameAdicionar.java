@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.HeadlessException;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.ParseException;
@@ -274,7 +276,10 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
             public void mouseClicked(MouseEvent e) {
                 if(rbSemestral.isSelected()){
                     rbSemestral.setSelected(false);
-                    
+                    jtfNextVenc.setText(LocalDate
+                            .now()
+                            .plusYears(1)
+                            .format(DateTimeFormatter.ofPattern("dd/MM/YYYY")));
                 }
             }
         });
@@ -284,7 +289,37 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
             public void mouseClicked(MouseEvent e) {
                 if(rbAnual.isSelected()){
                     rbAnual.setSelected(false);
-                    
+                    jtfNextVenc.setText(LocalDate
+                            .now()
+                            .plusMonths(6)
+                            .format(DateTimeFormatter.ofPattern("dd/MM/YYYY")));
+                }
+            }
+        });
+        
+        comboStatus.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if(e.getStateChange() == ItemEvent.SELECTED){
+                    if(comboStatus.getSelectedItem() == Membro.STATUS.A_VENCER){
+                        LocalDate aMonth = LocalDate.now().plusMonths(1);
+                        jtfNextVenc.setText(aMonth.format(DateTimeFormatter
+                                                .ofPattern("dd/MM/YYYY")));
+                    }else if(comboStatus.getSelectedItem() == Membro.STATUS.PAGO){
+                        rbAnual.setEnabled(true);
+                        rbAnual.setSelected(true);
+                        rbSemestral.setEnabled(true);
+                        LocalDate aYear = LocalDate.now().plusYears(1);
+                        jtfNextVenc.setText(aYear.format(DateTimeFormatter
+                                                .ofPattern("dd/MM/YYYY")));
+                    }else if(comboStatus.getSelectedItem() == Membro.STATUS.DEVENDO){
+                        rbAnual.setSelected(false);
+                        rbAnual.setEnabled(false);
+                        rbSemestral.setSelected(false);
+                        rbSemestral.setEnabled(false);
+                        jtfNextVenc.setText(LocalDate.now().format(DateTimeFormatter
+                                            .ofPattern("dd/MM/YYYY")));
+                    }
                 }
             }
         });
