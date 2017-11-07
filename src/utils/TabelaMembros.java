@@ -129,4 +129,12 @@ public class TabelaMembros extends AbstractTableModel{
     public void trocaMembro(int rowIndex, Membro mbr){
         fireTableRowsUpdated(rowIndex, rowIndex);
     }
+    
+    public void atualizaLinha(int row){
+        fireTableRowsUpdated(row, row);
+    }
+    
+    public void atualizaTabelaInteira(){
+        fireTableDataChanged();
+    }
 }
