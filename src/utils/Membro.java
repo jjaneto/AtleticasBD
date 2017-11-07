@@ -16,7 +16,8 @@ public class Membro implements Comparable{
     public enum STATUS{
         PAGO("Pago"), 
         DEVENDO("Devendo"), 
-        A_VENCER("A vencer");
+        A_VENCER("A vencer"),
+        A_RECEBER_CARTEIRA("Sem carteirinha");
         
         private final String value;
         
@@ -60,7 +61,7 @@ public class Membro implements Comparable{
     public enum MODALIDADE{
         ANUAL("Anual"),
         SEMESTRAL("Semestral"),
-        NAO_DEFINIDO("Não definida");
+        NAO_DEFINIDO("Não definida");        
 
         private final String value;
         
