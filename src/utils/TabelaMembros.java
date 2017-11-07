@@ -127,6 +127,7 @@ public class TabelaMembros extends AbstractTableModel{
     }
     
     public void trocaMembro(int rowIndex, Membro mbr){
+        this.arrRows.set(rowIndex, mbr);
         fireTableRowsUpdated(rowIndex, rowIndex);
     }
     
