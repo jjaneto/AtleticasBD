@@ -72,6 +72,8 @@ public final class FrameVisualizar extends JFrame implements FrameInterativo {
     private JTextField jtfNascimento;
     private JTextField jtfTelefone;
     private JTextField jtfNextVenc;
+    private JTextField jtfUltimaAssociacao;
+    private JTextField jtfRecebeuCarteira;
 
     private JLabel lbMatAtl;
     private JLabel lbMatUni;
@@ -88,6 +90,8 @@ public final class FrameVisualizar extends JFrame implements FrameInterativo {
     private JLabel lbPlano;
     private JLabel lbModalidade;
     private JLabel lbNextVenc;
+    private JLabel lbRecebeuCarteira;
+    private JLabel lbUltimaAssociacao;
 
     private MaskFormatter maskCPF;
     private MaskFormatter maskTelefone;
@@ -193,7 +197,12 @@ public final class FrameVisualizar extends JFrame implements FrameInterativo {
         
         rbAnual = new JRadioButton("Anual");
         rbSemestral = new JRadioButton("Semestral");
-
+        
+        lbRecebeuCarteira = new JLabel("Recebeu Carteira: ");
+        jtfRecebeuCarteira = new JTextField();
+        lbUltimaAssociacao = new JLabel("Última Associação:");
+        jtfUltimaAssociacao = new JTextField(mbr.getUltimaAssociacao_formatado());
+        
         panelDados = new JPanel(new MigLayout("debug, fillx"));
         JLabel lbAtletica = new JLabel("Dados Atlética");
         panelDados.add(lbAtletica, new CC().alignX("center").spanX());
@@ -203,6 +212,10 @@ public final class FrameVisualizar extends JFrame implements FrameInterativo {
         panelDados.add(jtfMembroDesde, "growx, wrap");
         panelDados.add(lbOcupacao, "split 2");
         panelDados.add(jtfOcupacao, "growx, wrap");
+        panelDados.add(lbRecebeuCarteira, "split 4");
+        panelDados.add(jtfRecebeuCarteira, "growx");
+        panelDados.add(lbUltimaAssociacao);
+        panelDados.add(jtfUltimaAssociacao, "growx, wrap");
         
         JLabel lbPessoa = new JLabel("Dados Pessoais");
         panelDados.add(lbPessoa, new CC().alignX("center").spanX());
@@ -226,29 +239,9 @@ public final class FrameVisualizar extends JFrame implements FrameInterativo {
         panelDados.add(lbPlano, new CC().alignX("center").spanX());
         if(mbr.getStatus() == Membro.STATUS.A_RECEBER_CARTEIRA){
             btComunicarCarteirinha = new JButton("Confirmar recebimento de carteirinha");
-            panelDados.add(btComunicarCarteirinha, "span, wrap");
+            panelDados.add(btComunicarCarteirinha, new CC().alignX("center").spanX());
         }else{
-            comboStatus = new JComboBox(Membro.STATUS.values());
-            comboStatus.setSelectedItem(Membro.STATUS.DEVENDO);
-            rbAnual = new JRadioButton("Anual");
-            rbAnual.setEnabled(false);
-            rbSemestral = new JRadioButton("Semestral");
-            rbSemestral.setEnabled(false);
-            lbModalidade = new JLabel("Modalidade: ");
-            lbNextVenc = new JLabel("Próximo Vencimento");
-            jtfNextVenc = new JTextField(mbr.getVencimentoFormatado());
-            jtfNextVenc.setEditable(false);
-            jtfNextVenc.setForeground(Color.LIGHT_GRAY);
-            panelDados.add(lbStatus, "split 2");
-            panelDados.add(comboStatus, "growx, wrap");     
-            panelDados.add(lbModalidade, "split 3");
-            ButtonGroup groupBt = new ButtonGroup();
-            groupBt.add(rbAnual);
-            groupBt.add(rbSemestral);
-            panelDados.add(rbAnual);
-            panelDados.add(rbSemestral, "wrap");        
-            panelDados.add(lbNextVenc, "split 2");
-            panelDados.add(jtfNextVenc, "growx, wrap");
+            
         }
         
         arrTextField = new JTextField[]{
@@ -332,6 +325,40 @@ public final class FrameVisualizar extends JFrame implements FrameInterativo {
 
                 } else {
                     dispose();
+                }
+            }
+        });
+        
+        btComunicarCarteirinha.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int option = JOptionPane.showConfirmDialog(getContentPane(), 
+                        "Você confirma que o membro recebeu a carteirinha?", 
+                        "Confirmação", JOptionPane.YES_NO_OPTION, 
+                        JOptionPane.QUESTION_MESSAGE);
+                
+                if(option == JOptionPane.YES_OPTION){
+                    LocalDate now = LocalDate.now();
+                    Membro novo = new Membro(mbr);
+                    novo.setStatus(Membro.STATUS.PAGO);
+                    novo.setRecebeu_carteira(true);
+                    novo.setRecebimentoCarteira(now);
+                    if(novo.getModalidade() == Membro.MODALIDADE.ANUAL){
+                        novo.setVencimento(now.plusYears(1));
+                    }else{
+                        novo.setVencimento(now.plusMonths(6));
+                    }
+                    if(BancoControle.atualizaMembroVariasColunas(novo)){
+                        JOptionPane.showMessageDialog(getContentPane(), 
+                                "Atualização concluída", 
+                                "Êxito", JOptionPane.INFORMATION_MESSAGE);
+                        model.trocaMembro(rowStatus, novo);
+                        dispose();
+                    }else{
+                        JOptionPane.showMessageDialog(getContentPane(), 
+                                "Erro ao atualizar membro.", 
+                                "Erro", JOptionPane.ERROR_MESSAGE);
+                    }
                 }
             }
         });
