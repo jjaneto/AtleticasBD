@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.HeadlessException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
@@ -13,6 +15,7 @@ import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -220,6 +223,9 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
         panelPrincipal.add(comboStatus, "growx");       
         panelPrincipal.add(btDoubt, "growx, wrap");       
         panelPrincipal.add(lbModalidade, "split 3");
+        ButtonGroup groupBt = new ButtonGroup();
+        groupBt.add(rbAnual);
+        groupBt.add(rbSemestral);
         panelPrincipal.add(rbAnual);
         panelPrincipal.add(rbSemestral, "wrap");        
         panelPrincipal.add(lbNextVenc, "split 2");
@@ -281,36 +287,37 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
                 dispose();
             }
         });
-        
-        rbAnual.addMouseListener(new MouseAdapter() {
+                
+        rbAnual.addActionListener(new ActionListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                rbAnual.setSelected(true);
-                rbSemestral.setSelected(false);
-                jtfNextVenc.setText(LocalDate
-                        .now()
-                        .plusYears(1)
-                        .format(DateTimeFormatter.ofPattern("dd/MM/YYYY")));
-
+            public void actionPerformed(ActionEvent e) {
+                if(rbAnual.isSelected() && rbAnual.isEnabled()){
+                        jtfNextVenc.setText(LocalDate
+                                .now()
+                                .plusYears(1)
+                                .format(DateTimeFormatter.ofPattern("dd/MM/YYYY")));
+                }
             }
         });
         
-        rbSemestral.addMouseListener(new MouseAdapter() {
+        rbSemestral.addActionListener(new ActionListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                rbSemestral.setSelected(true);
-                rbAnual.setSelected(false);
-                jtfNextVenc.setText(LocalDate
-                        .now()
-                        .plusMonths(6)
-                        .format(DateTimeFormatter.ofPattern("dd/MM/YYYY")));
+            public void actionPerformed(ActionEvent e) {
+                if(rbSemestral.isSelected() && rbSemestral.isEnabled()){
+                    jtfNextVenc.setText(LocalDate
+                            .now()
+                            .plusMonths(6)
+                            .format(DateTimeFormatter.ofPattern("dd/MM/YYYY")));
+                }
             }
         });
         
         btDoubt.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                
+                JOptionPane.showMessageDialog(getContentPane(), 
+                        "Você só pode selecionar a modalidade caso o membro tenha pago.",
+                        "Aviso", JOptionPane.INFORMATION_MESSAGE);
             }
         });
         
