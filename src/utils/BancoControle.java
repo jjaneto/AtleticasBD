@@ -56,7 +56,7 @@ public class BancoControle {
             JOptionPane.showMessageDialog(null, 
                             "Erro ao adicionar membro ao banco de dados!\n"
                                     + trataMensagem(e), 
-                            "Erro.", JOptionPane.ERROR_MESSAGE);
+                            "Erro", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
             return false;
         }

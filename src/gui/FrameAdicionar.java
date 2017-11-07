@@ -79,9 +79,7 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
     private MaskFormatter maskCPF;
     private MaskFormatter maskTelefone;
     private MaskFormatter maskNascimento;
-    
-    private JComboBox comboStatus;
-    
+        
     private JRadioButton rbAnual;
     private JRadioButton rbSemestral;
     /**
@@ -113,7 +111,7 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
         atribuiListeners();
 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setMinimumSize(new Dimension(410, 470));
+        setMinimumSize(new Dimension(410, 440));
 //        pack();
         setResizable(false);
         setLocationRelativeTo(null);
@@ -159,8 +157,6 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
         lbOcupacao = new JLabel("Ocupação: ");
         jtfOcupacao = new JTextField();
         lbStatus = new JLabel("Status: ");
-        comboStatus = new JComboBox(Membro.STATUS.values());
-        comboStatus.setSelectedItem(Membro.STATUS.DEVENDO);
         lbMatAtletica = new JLabel("Matrícula da Atlética: ");
         jtfMatAtletica = new JTextField();
         jtfMatAtletica.setText(String.valueOf(novaMatricula + 1));
@@ -169,9 +165,7 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
                 + "Para editar manualmente, consulte o administrador.");
         
         rbAnual = new JRadioButton("Anual");
-        rbAnual.setEnabled(false);
         rbSemestral = new JRadioButton("Semestral");
-        rbSemestral.setEnabled(false);
         
         lbPlano = new JLabel("Plano de Associação");
         lbNextVenc = new JLabel("Próximo Vencimento");
@@ -217,8 +211,6 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
         panelPrincipal.add(lbTelefone);
         panelPrincipal.add(jtfTelefone, "growx, wrap");        
         panelPrincipal.add(lbPlano, new CC().alignX("center").spanX());
-        panelPrincipal.add(lbStatus, "split 2");
-        panelPrincipal.add(comboStatus, "growx, wrap");     
         panelPrincipal.add(lbModalidade, "split 3");
         ButtonGroup groupBt = new ButtonGroup();
         groupBt.add(rbAnual);
@@ -235,6 +227,7 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
         btOk.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                LocalDate now = LocalDate.now();
                 Membro mbr = new Membro();
                 mbr.setMatricula_atletica(jtfMatAtletica.getText());
                 mbr.setMatricula_universidade(jtfMatUniversidade.getText());
@@ -245,29 +238,20 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
                 mbr.setOcupacao(jtfOcupacao.getText());
                 mbr.setDataNascimento(LocalDate.parse(jtfNascimento.getText(), 
                                         DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-                mbr.setMembro_desde(LocalDate.now());
+                mbr.setMembro_desde(now);
+                mbr.setUltimaAssociacao(now);
                 mbr.setCurso(jtfCurso.getText());
                 mbr.setTelefone(jtfTelefone.getText());
                 mbr.setEmail(jtfEmail.getText());                
-                
-                if(comboStatus.getSelectedItem() == Membro.STATUS.PAGO){
-                    mbr.setStatus(Membro.STATUS.PAGO);                    
-                    if(rbAnual.isSelected()){
-                        mbr.setModalidade(Membro.MODALIDADE.ANUAL);
-                        mbr.setVencimento(LocalDate.now().plusYears(1));
-                    }else{
-                        mbr.setModalidade(Membro.MODALIDADE.SEMESTRAL);
-                        mbr.setVencimento(LocalDate.now().plusMonths(6));
-                    }
-                }else if(comboStatus.getSelectedItem() == Membro.STATUS.DEVENDO){
-                    mbr.setStatus(Membro.STATUS.DEVENDO);
-                    mbr.setVencimento(LocalDate.now());
-                    mbr.setModalidade(Membro.MODALIDADE.NAO_DEFINIDO);
+                mbr.setStatus(Membro.STATUS.A_RECEBER_CARTEIRA);                
+                if(rbAnual.isSelected()){
+                    mbr.setModalidade(Membro.MODALIDADE.ANUAL);
                 }else{
-                    mbr.setStatus(Membro.STATUS.A_VENCER);
-                    mbr.setVencimento(LocalDate.now().plusMonths(1));
-                    mbr.setModalidade(Membro.MODALIDADE.NAO_DEFINIDO);
-                }             
+                    mbr.setModalidade(Membro.MODALIDADE.SEMESTRAL);
+                }
+                mbr.setVencimento(now);
+                mbr.setRecebimentoCarteira(now);
+                mbr.setRecebeu_carteira(false);
                 if (BancoControle.adicionaMembro(mbr)) {
                     JOptionPane.showMessageDialog(getContentPane(),
                             "Adição concluída com sucesso!",
@@ -305,54 +289,6 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
                             .now()
                             .plusMonths(6)
                             .format(DateTimeFormatter.ofPattern("dd/MM/YYYY")));
-                }
-            }
-        });
-        
-//        btDoubt.addMouseListener(new MouseAdapter() {
-//            @Override
-//            public void mouseClicked(MouseEvent e) {
-//                JOptionPane.showMessageDialog(getContentPane(), 
-//                        "Você só pode selecionar a modalidade caso o membro tenha pago.",
-//                        "Aviso", JOptionPane.INFORMATION_MESSAGE);
-//            }
-//        });
-        
-        comboStatus.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if(e.getStateChange() == ItemEvent.SELECTED){
-                    if(comboStatus.getSelectedItem() == Membro.STATUS.A_VENCER){
-                        rbAnual.setSelected(false);
-                        rbAnual.setEnabled(false);
-                        rbSemestral.setSelected(false);
-                        rbSemestral.setEnabled(false);
-                        LocalDate aMonth = LocalDate.now().plusMonths(1);
-                        jtfNextVenc.setText(aMonth.format(DateTimeFormatter
-                                                .ofPattern("dd/MM/YYYY")));
-                    }else if(comboStatus.getSelectedItem() == Membro.STATUS.PAGO ||
-                            comboStatus.getSelectedItem() == Membro.STATUS.A_RECEBER_CARTEIRA){
-                        if(comboStatus.getSelectedItem() == Membro.STATUS.A_RECEBER_CARTEIRA){
-                            JOptionPane.showMessageDialog(getContentPane(),
-                                    "Somente selecione essa opção caso o membro "
-                                            + "já tenha pago mas ainda não tenha a carteirinha."
-                                            + "\nUma vez que o mesmo a receba, lembre-se de atualizar o status.", 
-                                    "Atenção!", JOptionPane.WARNING_MESSAGE);
-                        }
-                        rbAnual.setEnabled(true);
-                        rbAnual.setSelected(true);
-                        rbSemestral.setEnabled(true);
-                        LocalDate aYear = LocalDate.now().plusYears(1);
-                        jtfNextVenc.setText(aYear.format(DateTimeFormatter
-                                                .ofPattern("dd/MM/YYYY")));
-                    }else if(comboStatus.getSelectedItem() == Membro.STATUS.DEVENDO){
-                        rbAnual.setSelected(false);
-                        rbAnual.setEnabled(false);
-                        rbSemestral.setSelected(false);
-                        rbSemestral.setEnabled(false);
-                        jtfNextVenc.setText(LocalDate.now().format(DateTimeFormatter
-                                            .ofPattern("dd/MM/YYYY")));
-                    }
                 }
             }
         });

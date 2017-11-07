@@ -87,6 +87,9 @@ public class Membro implements Comparable{
     private LocalDate dataNascimento;
     private LocalDate membro_desde;
     private LocalDate vencimento;
+    private LocalDate ultimaAssociacao;
+    private LocalDate recebimentoCarteira;
+    private boolean recebeu_carteira;
     private STATUS status;
     private MODALIDADE modalidade;
 
@@ -110,12 +113,16 @@ public class Membro implements Comparable{
                                     DateTimeFormatter.ofPattern("dd/MM/yyyy"));
             this.dataNascimento = LocalDate.parse(st.getString("nascimento"),
                                     DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-            if(LocalDate.now().isAfter(vencimento)){
-                this.status = STATUS.DEVENDO;
-            }else if(ChronoUnit.DAYS.between(LocalDate.now(), vencimento) <= (long) 30){
-                this.status = STATUS.A_VENCER;
+            if((recebeu_carteira = st.getBoolean("recebeu_carteira"))){
+                if(LocalDate.now().isAfter(vencimento)){
+                    this.status = STATUS.DEVENDO;
+                }else if(ChronoUnit.DAYS.between(LocalDate.now(), vencimento) <= (long) 30){
+                    this.status = STATUS.A_VENCER;
+                }else{
+                    this.status = STATUS.PAGO;
+                }
             }else{
-                this.status = STATUS.PAGO;
+                this.status = STATUS.A_RECEBER_CARTEIRA;
             }
         } catch (SQLException e) {
             System.err.println("Erro ao setar atributo do membro durante sua inicializacao!");
@@ -265,6 +272,40 @@ public class Membro implements Comparable{
         this.modalidade = modalidade;
     }
 
+    public LocalDate getUltimaAssociacao() {
+        return ultimaAssociacao;
+    }
+    
+    public String getUltimaAssociacao_formatado(){
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        return dtf.format(ultimaAssociacao);
+    }
+
+    public void setUltimaAssociacao(LocalDate ultimaAssociacao) {
+        this.ultimaAssociacao = ultimaAssociacao;
+    }
+
+    public LocalDate getRecebimentoCarteira() {
+        return recebimentoCarteira;
+    }
+    
+    public String getRecebimentoCarteira_formatado(){
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        return dtf.format(recebimentoCarteira);
+    }
+
+    public void setRecebimentoCarteira(LocalDate recebimentoCarteira) {
+        this.recebimentoCarteira = recebimentoCarteira;
+    }
+
+    public boolean isRecebeu_carteira() {
+        return recebeu_carteira;
+    }
+
+    public void setRecebeu_carteira(boolean recebeu_carteira) {
+        this.recebeu_carteira = recebeu_carteira;
+    }
+    
     public String toSQL() {
         String ret = "(";
         ret += "'" + getMatricula_atletica() + "', ";
@@ -278,7 +319,11 @@ public class Membro implements Comparable{
         ret += "'" + getCurso() + "', ";
         ret += "'" + getDataNascimentoFormatado() + "', ";
         ret += "'" + getTelefone() + "', ";
-        ret += "'" + getEmail() + "')";
+        ret += "'" + getEmail() + "', ";
+        ret += "'" + getModalidade() + "', ";
+        ret += "'" + getUltimaAssociacao_formatado() + "', ";
+        ret += "'" + getRecebimentoCarteira_formatado() + "', ";
+        ret += "'" + isRecebeu_carteira() + "')";
         return ret;
     }
     
