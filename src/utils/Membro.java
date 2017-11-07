@@ -113,6 +113,8 @@ public class Membro implements Comparable{
                                     DateTimeFormatter.ofPattern("dd/MM/yyyy"));
             this.dataNascimento = LocalDate.parse(st.getString("nascimento"),
                                     DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            this.ultimaAssociacao = LocalDate.parse(st.getString("ultima_associacao"),
+                                    DateTimeFormatter.ofPattern("dd/MM/yyyy"));
             if((recebeu_carteira = st.getBoolean("recebeu_carteira"))){
                 if(LocalDate.now().isAfter(vencimento)){
                     this.status = STATUS.DEVENDO;
@@ -130,6 +132,26 @@ public class Membro implements Comparable{
             e.printStackTrace();
             Logs.printLogEdicao(e, this);
         }
+    }
+    
+    public Membro(Membro mbr){
+        this.CPF = mbr.getCPF();
+        this.RG = mbr.getRG();
+        this.curso = mbr.getCurso();
+        this.dataNascimento = mbr.getDataNascimento();
+        this.email = mbr.getEmail();
+        this.matricula_atletica = mbr.getMatricula_atletica();
+        this.matricula_universidade = mbr.getMatricula_universidade();
+        this.membro_desde = mbr.getMembro_desde();
+        this.modalidade = mbr.getModalidade();
+        this.nome = mbr.getNome();
+        this.ocupacao = mbr.getOcupacao();
+        this.recebeu_carteira = mbr.isRecebeu_carteira();
+        this.recebimentoCarteira = mbr.getRecebimentoCarteira();
+        this.status = mbr.getStatus();
+        this.telefone = mbr.getTelefone();
+        this.ultimaAssociacao = mbr.getUltimaAssociacao();
+        this.vencimento = mbr.getVencimento();
     }
 
     public Membro(String matricula_atletica, String matricula_universidade,
@@ -334,7 +356,17 @@ public class Membro implements Comparable{
         ret += "rg = '" + getRG() + "', ";
         ret += "membro_desde = '" + getMembro_desde_formatado() + "', ";
         ret += "ocupacao = '" + getOcupacao() + "', ";
-        ret += "status = '" + getStatus() + "'";        
+//        ret += "status = '" + getStatus() + "', ";
+        ret += "cpf = '" + getCPF() + "', ";
+        ret += "vencimento = '" + getVencimentoFormatado() + "', ";
+        ret += "curso = '" + getCurso() + "', ";
+        ret += "nascimento = '" + getDataNascimentoFormatado() + "', ";
+        ret += "telefone = '" + getTelefone() + "', ";
+        ret += "email = '" + getEmail() + "', ";
+        ret += "modalidade = '" + getModalidade() + "', ";
+        ret += "ultima_associacao = '" + getUltimaAssociacao_formatado() + "', ";
+        ret += "confirmacao_carteira = '" + getRecebimentoCarteira_formatado() + "', ";
+        ret += "recebeu_carteira = '" + isRecebeu_carteira() + "'";
         return ret;
     }
    
