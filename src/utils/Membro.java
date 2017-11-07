@@ -13,11 +13,11 @@ import java.time.temporal.ChronoUnit;
  */
 public class Membro implements Comparable{
     
-    public enum STATUS{
+    public enum STATUS{        
         PAGO("Pago"), 
+        A_RECEBER_CARTEIRA("Sem carteirinha"),
         DEVENDO("Devendo"), 
-        A_VENCER("A vencer"),
-        A_RECEBER_CARTEIRA("Sem carteirinha");
+        A_VENCER("A vencer");
         
         private final String value;
         

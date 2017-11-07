@@ -1,14 +1,18 @@
 package gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.ParseException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -17,6 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.text.MaskFormatter;
+import net.miginfocom.layout.CC;
 import net.miginfocom.swing.MigLayout;
 import utils.BancoControle;
 import utils.Membro;
@@ -49,6 +54,7 @@ public final class FrameVisualizar extends JFrame implements FrameInterativo {
     private JButton btSalvar;
     private JButton btFechar;
     private JButton btEditar;
+    private JButton btComunicarCarteirinha;
 
     /**
      * Todos os campos de digitação, e seus respectivos labels.
@@ -65,6 +71,7 @@ public final class FrameVisualizar extends JFrame implements FrameInterativo {
     private JTextField jtfMembroDesde;
     private JTextField jtfNascimento;
     private JTextField jtfTelefone;
+    private JTextField jtfNextVenc;
 
     private JLabel lbMatAtl;
     private JLabel lbMatUni;
@@ -78,6 +85,9 @@ public final class FrameVisualizar extends JFrame implements FrameInterativo {
     private JLabel lbEmail;
     private JLabel lbTelefone;
     private JLabel lbCurso;
+    private JLabel lbPlano;
+    private JLabel lbModalidade;
+    private JLabel lbNextVenc;
 
     private MaskFormatter maskCPF;
     private MaskFormatter maskTelefone;
@@ -85,6 +95,8 @@ public final class FrameVisualizar extends JFrame implements FrameInterativo {
     
     private JRadioButton rbAnual;
     private JRadioButton rbSemestral;
+    
+    private JComboBox comboStatus;
     
     /**
      * Array para auxiliar troca de editable.
@@ -183,32 +195,62 @@ public final class FrameVisualizar extends JFrame implements FrameInterativo {
         rbSemestral = new JRadioButton("Semestral");
 
         panelDados = new JPanel(new MigLayout("debug, fillx"));
+        JLabel lbAtletica = new JLabel("Dados Atlética");
+        panelDados.add(lbAtletica, new CC().alignX("center").spanX());
         panelDados.add(lbMatAtl, "split 4");
         panelDados.add(jtfMatAtl, "growx");
         panelDados.add(lbMembroDesde);
         panelDados.add(jtfMembroDesde, "growx, wrap");
-
+        panelDados.add(lbOcupacao, "split 2");
+        panelDados.add(jtfOcupacao, "growx, wrap");
+        
+        JLabel lbPessoa = new JLabel("Dados Pessoais");
+        panelDados.add(lbPessoa, new CC().alignX("center").spanX());
         panelDados.add(lbMatUni, "split 2");
         panelDados.add(jtfMatUniversidade, "growx, wrap");
         panelDados.add(lbNome, "split 2");
         panelDados.add(jtfNome, "growx, wrap");
-        panelDados.add(lbCPF, "split 2");
-        panelDados.add(jtfCPF, "growx, wrap");
-        panelDados.add(lbRG, "split 2");
+        panelDados.add(lbCPF, "split 4");
+        panelDados.add(jtfCPF, "growx");
+        panelDados.add(lbRG);
         panelDados.add(jtfRG, "growx, wrap");
-        panelDados.add(lbOcupacao, "split 2");
-        panelDados.add(jtfOcupacao, "growx, wrap");
-        panelDados.add(lbStatus, "split 2");
-        panelDados.add(jtfStatus, "growx, wrap");
         panelDados.add(lbEmail, "split 2");
         panelDados.add(jtfEmail, "growx, wrap");
         panelDados.add(lbCurso, "split 2");
         panelDados.add(jtfCurso, "growx, wrap");
-        panelDados.add(lbNascimento, "split 2");
-        panelDados.add(jtfNascimento, "growx, wrap");
-        panelDados.add(lbTelefone, "split 2");
-        panelDados.add(jtfTelefone, "growx");
-
+        panelDados.add(lbNascimento, "split 4");
+        panelDados.add(jtfNascimento, "growx");
+        panelDados.add(lbTelefone);
+        panelDados.add(jtfTelefone, "growx, wrap");
+        lbPlano = new JLabel("Plano de Associação");
+        panelDados.add(lbPlano, new CC().alignX("center").spanX());
+        if(mbr.getStatus() == Membro.STATUS.A_RECEBER_CARTEIRA){
+            btComunicarCarteirinha = new JButton("Confirmar recebimento de carteirinha");
+            panelDados.add(btComunicarCarteirinha, "span, wrap");
+        }else{
+            comboStatus = new JComboBox(Membro.STATUS.values());
+            comboStatus.setSelectedItem(Membro.STATUS.DEVENDO);
+            rbAnual = new JRadioButton("Anual");
+            rbAnual.setEnabled(false);
+            rbSemestral = new JRadioButton("Semestral");
+            rbSemestral.setEnabled(false);
+            lbModalidade = new JLabel("Modalidade: ");
+            lbNextVenc = new JLabel("Próximo Vencimento");
+            jtfNextVenc = new JTextField(mbr.getVencimentoFormatado());
+            jtfNextVenc.setEditable(false);
+            jtfNextVenc.setForeground(Color.LIGHT_GRAY);
+            panelDados.add(lbStatus, "split 2");
+            panelDados.add(comboStatus, "growx, wrap");     
+            panelDados.add(lbModalidade, "split 3");
+            ButtonGroup groupBt = new ButtonGroup();
+            groupBt.add(rbAnual);
+            groupBt.add(rbSemestral);
+            panelDados.add(rbAnual);
+            panelDados.add(rbSemestral, "wrap");        
+            panelDados.add(lbNextVenc, "split 2");
+            panelDados.add(jtfNextVenc, "growx, wrap");
+        }
+        
         arrTextField = new JTextField[]{
             jtfMatUniversidade,
             jtfNome,

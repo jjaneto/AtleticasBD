@@ -113,7 +113,7 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
         atribuiListeners();
 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setMinimumSize(new Dimension(400, 470));
+        setMinimumSize(new Dimension(410, 470));
 //        pack();
         setResizable(false);
         setLocationRelativeTo(null);
@@ -168,14 +168,12 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
         jtfMatAtletica.setToolTipText("Matrícula escolhida automaticamente. "
                 + "Para editar manualmente, consulte o administrador.");
         
-        lbPlano = new JLabel("Plano:");
         rbAnual = new JRadioButton("Anual");
         rbAnual.setEnabled(false);
         rbSemestral = new JRadioButton("Semestral");
         rbSemestral.setEnabled(false);
         
         lbPlano = new JLabel("Plano de Associação");
-        btDoubt = new JButton("?");
         lbNextVenc = new JLabel("Próximo Vencimento");
         lbModalidade = new JLabel("Modalidade: ");
         jtfNextVenc = new JTextField(LocalDate.now().
@@ -200,7 +198,7 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
         panelPrincipal.add(jtfMatAtletica, "growx, wrap");
         panelPrincipal.add(lbOcupacao, "split 2");
         panelPrincipal.add(jtfOcupacao, "growx, wrap");
-        JLabel lbPessoa = new JLabel("Dados Pessoa");
+        JLabel lbPessoa = new JLabel("Dados Pessoais");
         panelPrincipal.add(lbPessoa, new CC().alignX("center").spanX());
         panelPrincipal.add(lbMatUniversidade, "split 2");
         panelPrincipal.add(jtfMatUniversidade, "growx, wrap");
@@ -219,9 +217,8 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
         panelPrincipal.add(lbTelefone);
         panelPrincipal.add(jtfTelefone, "growx, wrap");        
         panelPrincipal.add(lbPlano, new CC().alignX("center").spanX());
-        panelPrincipal.add(lbStatus, "split 3");
-        panelPrincipal.add(comboStatus, "growx");       
-        panelPrincipal.add(btDoubt, "growx, wrap");       
+        panelPrincipal.add(lbStatus, "split 2");
+        panelPrincipal.add(comboStatus, "growx, wrap");     
         panelPrincipal.add(lbModalidade, "split 3");
         ButtonGroup groupBt = new ButtonGroup();
         groupBt.add(rbAnual);
@@ -312,14 +309,14 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
             }
         });
         
-        btDoubt.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                JOptionPane.showMessageDialog(getContentPane(), 
-                        "Você só pode selecionar a modalidade caso o membro tenha pago.",
-                        "Aviso", JOptionPane.INFORMATION_MESSAGE);
-            }
-        });
+//        btDoubt.addMouseListener(new MouseAdapter() {
+//            @Override
+//            public void mouseClicked(MouseEvent e) {
+//                JOptionPane.showMessageDialog(getContentPane(), 
+//                        "Você só pode selecionar a modalidade caso o membro tenha pago.",
+//                        "Aviso", JOptionPane.INFORMATION_MESSAGE);
+//            }
+//        });
         
         comboStatus.addItemListener(new ItemListener() {
             @Override
@@ -333,7 +330,15 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
                         LocalDate aMonth = LocalDate.now().plusMonths(1);
                         jtfNextVenc.setText(aMonth.format(DateTimeFormatter
                                                 .ofPattern("dd/MM/YYYY")));
-                    }else if(comboStatus.getSelectedItem() == Membro.STATUS.PAGO){
+                    }else if(comboStatus.getSelectedItem() == Membro.STATUS.PAGO ||
+                            comboStatus.getSelectedItem() == Membro.STATUS.A_RECEBER_CARTEIRA){
+                        if(comboStatus.getSelectedItem() == Membro.STATUS.A_RECEBER_CARTEIRA){
+                            JOptionPane.showMessageDialog(getContentPane(),
+                                    "Somente selecione essa opção caso o membro "
+                                            + "já tenha pago mas ainda não tenha a carteirinha."
+                                            + "\nUma vez que o mesmo a receba, lembre-se de atualizar o status.", 
+                                    "Atenção!", JOptionPane.WARNING_MESSAGE);
+                        }
                         rbAnual.setEnabled(true);
                         rbAnual.setSelected(true);
                         rbSemestral.setEnabled(true);

@@ -80,7 +80,9 @@ public class TabelaMembros extends AbstractTableModel{
             case 3:
                 return mbr.getCurso();
             case 4:
-                return mbr.getStatus() + " | " + mbr.getVencimentoFormatado();
+                if(mbr.getStatus() == Membro.STATUS.A_RECEBER_CARTEIRA){
+                    return "Aguardando carteirinha";
+                }else return mbr.getStatus() + " | " + mbr.getVencimentoFormatado();
         }
 
         return null;
