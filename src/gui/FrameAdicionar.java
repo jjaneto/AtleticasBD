@@ -12,8 +12,10 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.ParseException;
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Locale;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
@@ -227,37 +229,58 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
         btOk.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                LocalDate now = LocalDate.now();
-                Membro mbr = new Membro();
-                mbr.setMatricula_atletica(jtfMatAtletica.getText());
-                mbr.setMatricula_universidade(jtfMatUniversidade.getText());
-                mbr.setNome(jtfNome.getText());
-                mbr.setCPF(jtfCPF.getText());
-                mbr.setRG(jtfRG.getText());
-                mbr.setMembro_desde(LocalDate.now());
-                mbr.setOcupacao(jtfOcupacao.getText());
-                mbr.setDataNascimento(LocalDate.parse(jtfNascimento.getText(), 
-                                        DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-                mbr.setMembro_desde(now);
-                mbr.setUltimaAssociacao(now);
-                mbr.setCurso(jtfCurso.getText());
-                mbr.setTelefone(jtfTelefone.getText());
-                mbr.setEmail(jtfEmail.getText());                
-                mbr.setStatus(Membro.STATUS.A_RECEBER_CARTEIRA);                
-                if(rbAnual.isSelected()){
-                    mbr.setModalidade(Membro.MODALIDADE.ANUAL);
-                }else{
-                    mbr.setModalidade(Membro.MODALIDADE.SEMESTRAL);
-                }
-                mbr.setVencimento(now);
-                mbr.setRecebimentoCarteira(now);
-                mbr.setRecebeu_carteira(false);
-                if (BancoControle.adicionaMembro(mbr)) {
+                if (!rbAnual.isSelected() && !rbSemestral.isSelected()) {
                     JOptionPane.showMessageDialog(getContentPane(),
-                            "Adição concluída com sucesso!",
-                            "Êxito", JOptionPane.INFORMATION_MESSAGE);
-                    model.addMembro(mbr);
-                    dispose();
+                            "Você precisa selecionar uma modalidade!",
+                            "Erro", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    boolean todosDigitados = getTexts();
+                    int ans = 0;
+                    if (!todosDigitados) {
+                        ans = JOptionPane.showConfirmDialog(getContentPane(), 
+                                "Há campos vazios. Deseja cadastrar membro mesmo assim?", 
+                                "Aviso", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                    }
+                    if (ans == JOptionPane.YES_OPTION || todosDigitados) {
+                        try{
+                            LocalDate now = LocalDate.now();
+                            Membro mbr = new Membro();
+                            mbr.setMatricula_atletica(jtfMatAtletica.getText());
+                            mbr.setMatricula_universidade(jtfMatUniversidade.getText());
+                            mbr.setNome(jtfNome.getText());
+                            mbr.setCPF(jtfCPF.getText());
+                            mbr.setRG(jtfRG.getText());
+                            mbr.setMembro_desde(LocalDate.now());
+                            mbr.setOcupacao(jtfOcupacao.getText());
+                            mbr.setDataNascimento(LocalDate.parse(jtfNascimento.getText(),
+                                    DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+                            mbr.setMembro_desde(now);
+                            mbr.setUltimaAssociacao(now);
+                            mbr.setCurso(jtfCurso.getText());
+                            mbr.setTelefone(jtfTelefone.getText());
+                            mbr.setEmail(jtfEmail.getText());
+                            mbr.setStatus(Membro.STATUS.A_RECEBER_CARTEIRA);
+                            if (rbAnual.isSelected()) {
+                                mbr.setModalidade(Membro.MODALIDADE.ANUAL);
+                            } else {
+                                mbr.setModalidade(Membro.MODALIDADE.SEMESTRAL);
+                            }
+                            mbr.setVencimento(now);
+                            mbr.setRecebimentoCarteira(now);
+                            mbr.setRecebeu_carteira(false);
+                            if (BancoControle.adicionaMembro(mbr)) {
+                                JOptionPane.showMessageDialog(getContentPane(),
+                                        "Adição concluída com sucesso!",
+                                        "Êxito", JOptionPane.INFORMATION_MESSAGE);
+                                model.addMembro(mbr);
+                                dispose();
+                            }
+                        }catch(DateTimeException dte){
+                            JOptionPane.showMessageDialog(getContentPane(), 
+                                    "Erro na data! Você digitou corretamente?", 
+                                    "Erro", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
                 }
             }
         });
@@ -294,4 +317,30 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
         });
     }
 
+    public boolean getTexts(){
+        if(jtfMatAtletica.getText().isEmpty()){
+            return false;
+        }else if(jtfMatUniversidade.getText().isEmpty()){
+            return false;
+        }else if(jtfNome.getText().isEmpty()){
+            return false;
+        }else if(jtfRG.getText().isEmpty()){
+            return false;
+        }else if(jtfOcupacao.getText().isEmpty()){
+            return false;
+        }else if(jtfEmail.getText().isEmpty()){
+            return false;
+        }else if(jtfCurso.getText().isEmpty()){
+            return false;
+        }else if(jtfNextVenc.getText().isEmpty()){
+            return false;
+        }else if(jtfNascimento.getText().equals("  /  /    ")){
+            return false;
+        }else if(jtfCPF.getText().equals("         ")){
+            return false;
+        }else if(jtfTelefone.getText().equals("(  )     -    ")){
+            return false;
+        }
+        return true;
+    }
 }
