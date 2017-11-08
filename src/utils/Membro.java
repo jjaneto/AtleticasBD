@@ -115,6 +115,15 @@ public class Membro implements Comparable{
                                     DateTimeFormatter.ofPattern("dd/MM/yyyy"));
             this.ultimaAssociacao = LocalDate.parse(st.getString("ultima_associacao"),
                                     DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            this.recebimentoCarteira = LocalDate.parse(st.getString("confirmacao_carteira"),
+                                        DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            if(st.getString("modalidade").equals(MODALIDADE.SEMESTRAL.toString())){
+                this.modalidade = MODALIDADE.SEMESTRAL;
+            }else if(st.getString("modalidade").equals(MODALIDADE.ANUAL.toString())){
+                this.modalidade = MODALIDADE.ANUAL;
+            }else{
+                this.modalidade = MODALIDADE.NAO_DEFINIDO;
+            }
             if((recebeu_carteira = st.getBoolean("recebeu_carteira"))){
                 if(LocalDate.now().isAfter(vencimento)){
                     this.status = STATUS.DEVENDO;
