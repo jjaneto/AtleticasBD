@@ -85,11 +85,11 @@ public class Membro implements Comparable{
     private String email;
     private String telefone;
     private LocalDate dataNascimento;
-    private LocalDate membro_desde;
+    private LocalDate membroDesde;
     private LocalDate vencimento;
     private LocalDate ultimaAssociacao;
-    private LocalDate recebimentoCarteira;
-    private boolean recebeu_carteira;
+    private LocalDate dataRecebimentoCarteira;
+    private boolean recebeuCarteira;
     private STATUS status;
     private MODALIDADE modalidade;
 
@@ -107,7 +107,7 @@ public class Membro implements Comparable{
             this.email = st.getString("email");
             this.telefone = st.getString("telefone");
             this.curso = st.getString("curso");
-            this.membro_desde = LocalDate.parse(st.getString("membro_desde"),   
+            this.membroDesde = LocalDate.parse(st.getString("membro_desde"),   
                                     DateTimeFormatter.ofPattern("dd/MM/yyyy"));
             this.vencimento = LocalDate.parse(st.getString("vencimento"),
                                     DateTimeFormatter.ofPattern("dd/MM/yyyy"));
@@ -115,7 +115,7 @@ public class Membro implements Comparable{
                                     DateTimeFormatter.ofPattern("dd/MM/yyyy"));
             this.ultimaAssociacao = LocalDate.parse(st.getString("ultima_associacao"),
                                     DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-            this.recebimentoCarteira = LocalDate.parse(st.getString("confirmacao_carteira"),
+            this.dataRecebimentoCarteira = LocalDate.parse(st.getString("confirmacao_carteira"),
                                         DateTimeFormatter.ofPattern("dd/MM/yyyy"));
             if(st.getString("modalidade").equals(MODALIDADE.SEMESTRAL.toString())){
                 this.modalidade = MODALIDADE.SEMESTRAL;
@@ -124,7 +124,7 @@ public class Membro implements Comparable{
             }else{
                 this.modalidade = MODALIDADE.NAO_DEFINIDO;
             }
-            if((recebeu_carteira = st.getBoolean("recebeu_carteira"))){
+            if((recebeuCarteira = st.getBoolean("recebeu_carteira"))){
                 if(LocalDate.now().isAfter(vencimento)){
                     this.status = STATUS.DEVENDO;
                 }else if(ChronoUnit.DAYS.between(LocalDate.now(), vencimento) <= (long) 30){
@@ -151,12 +151,12 @@ public class Membro implements Comparable{
         this.email = mbr.getEmail();
         this.matricula_atletica = mbr.getMatricula_atletica();
         this.matricula_universidade = mbr.getMatricula_universidade();
-        this.membro_desde = mbr.getMembro_desde();
+        this.membroDesde = mbr.getMembroDesde();
         this.modalidade = mbr.getModalidade();
         this.nome = mbr.getNome();
         this.ocupacao = mbr.getOcupacao();
-        this.recebeu_carteira = mbr.isRecebeu_carteira();
-        this.recebimentoCarteira = mbr.getRecebimentoCarteira();
+        this.recebeuCarteira = mbr.isRecebeuCarteira();
+        this.dataRecebimentoCarteira = mbr.getDataRecebimentoCarteira();
         this.status = mbr.getStatus();
         this.telefone = mbr.getTelefone();
         this.ultimaAssociacao = mbr.getUltimaAssociacao();
@@ -173,7 +173,7 @@ public class Membro implements Comparable{
         this.RG = RG;
         this.ocupacao = ocupacao;
         this.status = status;
-        this.membro_desde = membro_desde;
+        this.membroDesde = membro_desde;
     }
 
     public String getMatricula_atletica() {
@@ -232,17 +232,17 @@ public class Membro implements Comparable{
         this.status = status;
     }
 
-    public LocalDate getMembro_desde() {
-        return membro_desde;
+    public LocalDate getMembroDesde() {
+        return membroDesde;
     }
     
     public String getMembro_desde_formatado(){
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        return dtf.format(membro_desde);
+        return dtf.format(membroDesde);
     }
 
-    public void setMembro_desde(LocalDate membro_desde) {
-        this.membro_desde = membro_desde;
+    public void setMembroDesde(LocalDate membroDesde) {
+        this.membroDesde = membroDesde;
     }
 
     public String getCurso() {
@@ -316,25 +316,25 @@ public class Membro implements Comparable{
         this.ultimaAssociacao = ultimaAssociacao;
     }
 
-    public LocalDate getRecebimentoCarteira() {
-        return recebimentoCarteira;
+    public LocalDate getDataRecebimentoCarteira() {
+        return dataRecebimentoCarteira;
     }
     
     public String getRecebimentoCarteira_formatado(){
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        return dtf.format(recebimentoCarteira);
+        return dtf.format(dataRecebimentoCarteira);
     }
 
-    public void setRecebimentoCarteira(LocalDate recebimentoCarteira) {
-        this.recebimentoCarteira = recebimentoCarteira;
+    public void setDataRecebimentoCarteira(LocalDate dataRecebimentoCarteira) {
+        this.dataRecebimentoCarteira = dataRecebimentoCarteira;
     }
 
-    public boolean isRecebeu_carteira() {
-        return recebeu_carteira;
+    public boolean isRecebeuCarteira() {
+        return recebeuCarteira;
     }
 
-    public void setRecebeu_carteira(boolean recebeu_carteira) {
-        this.recebeu_carteira = recebeu_carteira;
+    public void setRecebeuCarteira(boolean recebeuCarteira) {
+        this.recebeuCarteira = recebeuCarteira;
     }
     
     public String toSQL() {
@@ -354,7 +354,7 @@ public class Membro implements Comparable{
         ret += "'" + getModalidade() + "', ";
         ret += "'" + getUltimaAssociacao_formatado() + "', ";
         ret += "'" + getRecebimentoCarteira_formatado() + "', ";
-        ret += "'" + isRecebeu_carteira() + "')";
+        ret += "'" + isRecebeuCarteira() + "')";
         return ret;
     }
     
@@ -365,7 +365,6 @@ public class Membro implements Comparable{
         ret += "rg = '" + getRG() + "', ";
         ret += "membro_desde = '" + getMembro_desde_formatado() + "', ";
         ret += "ocupacao = '" + getOcupacao() + "', ";
-//        ret += "status = '" + getStatus() + "', ";
         ret += "cpf = '" + getCPF() + "', ";
         ret += "vencimento = '" + getVencimentoFormatado() + "', ";
         ret += "curso = '" + getCurso() + "', ";
@@ -375,7 +374,7 @@ public class Membro implements Comparable{
         ret += "modalidade = '" + getModalidade() + "', ";
         ret += "ultima_associacao = '" + getUltimaAssociacao_formatado() + "', ";
         ret += "confirmacao_carteira = '" + getRecebimentoCarteira_formatado() + "', ";
-        ret += "recebeu_carteira = '" + isRecebeu_carteira() + "'";
+        ret += "recebeu_carteira = '" + isRecebeuCarteira() + "'";
         return ret;
     }
    
