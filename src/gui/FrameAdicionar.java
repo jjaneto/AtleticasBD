@@ -27,6 +27,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.text.MaskFormatter;
 import net.miginfocom.layout.CC;
@@ -69,7 +70,6 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
     private JLabel lbCPF;
     private JLabel lbRG;
     private JLabel lbOcupacao;
-    private JLabel lbStatus;
     private JLabel lbEmail;
     private JLabel lbTelefone;
     private JLabel lbCurso;
@@ -84,12 +84,13 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
         
     private JRadioButton rbAnual;
     private JRadioButton rbSemestral;
+    
     /**
      * Botões.
      */
     private JButton btOk;
     private JButton btCancelar;
-    private JButton btDoubt;
+    private JButton btAlterarOcupacao;
     
 
     /**
@@ -113,7 +114,7 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
         atribuiListeners();
 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setMinimumSize(new Dimension(410, 440));
+        setMinimumSize(new Dimension(410, 450));
 //        pack();
         setResizable(false);
         setLocationRelativeTo(null);
@@ -127,10 +128,9 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
         /**
          * Panel dos botoes.
          */
-        btOk = new JButton("Adicionar");
-        btOk.setIcon(new ImageIcon("./img/ok.png"));
-        btCancelar = new JButton("Cancelar");
-        btCancelar.setIcon(new ImageIcon("./img/cancel.png"));
+        btOk = new JButton("Adicionar", new ImageIcon("./img/ok.png"));
+        btCancelar = new JButton("Cancelar", new ImageIcon("./img/cancel.png"));
+        btAlterarOcupacao = new JButton("Alterar Ocupação", new ImageIcon("./img/new.png"));
 
         try {
             maskCPF = new MaskFormatter("###########");
@@ -158,7 +158,8 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
         jtfRG = new JTextField();
         lbOcupacao = new JLabel("Ocupação: ");
         jtfOcupacao = new JTextField();
-        lbStatus = new JLabel("Status: ");
+        jtfOcupacao.setEditable(false);
+        jtfOcupacao.setText("Associado");
         lbMatAtletica = new JLabel("Matrícula da Atlética: ");
         jtfMatAtletica = new JTextField();
         jtfMatAtletica.setText(String.valueOf(novaMatricula + 1));
@@ -187,15 +188,18 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
         /**
          * Panel dos dados do membro.
          */
-        panelPrincipal = new JPanel(new MigLayout("debug, fillx"));
-        JLabel lbAtletica = new JLabel("Dados Atlética");
+        panelPrincipal = new JPanel(new MigLayout("fillx"));
+        JLabel lbAtletica = new JLabel("Dados Atlética");        
         panelPrincipal.add(lbAtletica, new CC().alignX("center").spanX());
+        panelPrincipal.add(new JSplitPane(JSplitPane.HORIZONTAL_SPLIT), "spanx, growx");
         panelPrincipal.add(lbMatAtletica, "split 2");
         panelPrincipal.add(jtfMatAtletica, "growx, wrap");
-        panelPrincipal.add(lbOcupacao, "split 2");
-        panelPrincipal.add(jtfOcupacao, "growx, wrap");
-        JLabel lbPessoa = new JLabel("Dados Pessoais");
+        panelPrincipal.add(lbOcupacao, "split 3");
+        panelPrincipal.add(jtfOcupacao, "growx");
+        panelPrincipal.add(btAlterarOcupacao, "wrap");
+        JLabel lbPessoa = new JLabel("Dados Pessoais");        
         panelPrincipal.add(lbPessoa, new CC().alignX("center").spanX());
+        panelPrincipal.add(new JSplitPane(JSplitPane.HORIZONTAL_SPLIT), "spanx, growx");
         panelPrincipal.add(lbMatUniversidade, "split 2");
         panelPrincipal.add(jtfMatUniversidade, "growx, wrap");
         panelPrincipal.add(lbNome, "split 2");
@@ -213,6 +217,7 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
         panelPrincipal.add(lbTelefone);
         panelPrincipal.add(jtfTelefone, "growx, wrap");        
         panelPrincipal.add(lbPlano, new CC().alignX("center").spanX());
+        panelPrincipal.add(new JSplitPane(JSplitPane.HORIZONTAL_SPLIT), "spanx, growx");
         panelPrincipal.add(lbModalidade, "split 3");
         ButtonGroup groupBt = new ButtonGroup();
         groupBt.add(rbAnual);
@@ -250,11 +255,11 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
                             mbr.setNome(jtfNome.getText());
                             mbr.setCPF(jtfCPF.getText());
                             mbr.setRG(jtfRG.getText());
-                            mbr.setMembro_desde(LocalDate.now());
+                            mbr.setMembroDesde(LocalDate.now());
                             mbr.setOcupacao(jtfOcupacao.getText());
                             mbr.setDataNascimento(LocalDate.parse(jtfNascimento.getText(),
                                     DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-                            mbr.setMembro_desde(now);
+                            mbr.setMembroDesde(now);
                             mbr.setUltimaAssociacao(now);
                             mbr.setCurso(jtfCurso.getText());
                             mbr.setTelefone(jtfTelefone.getText());
@@ -266,8 +271,8 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
                                 mbr.setModalidade(Membro.MODALIDADE.SEMESTRAL);
                             }
                             mbr.setVencimento(now);
-                            mbr.setRecebimentoCarteira(now);
-                            mbr.setRecebeu_carteira(false);
+                            mbr.setDataRecebimentoCarteira(now);
+                            mbr.setRecebeuCarteira(false);
                             if (BancoControle.adicionaMembro(mbr)) {
                                 JOptionPane.showMessageDialog(getContentPane(),
                                         "Adição concluída com sucesso!",
@@ -313,6 +318,18 @@ public final class FrameAdicionar extends JFrame implements FrameInterativo {
                             .plusMonths(6)
                             .format(DateTimeFormatter.ofPattern("dd/MM/YYYY")));
                 }
+            }
+        });
+        
+        btAlterarOcupacao.addMouseListener(new MouseAdapter(){
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                Object options[] = {"Associado", "Vendas"};
+                JComboBox combobox = new JComboBox(options);
+                JOptionPane.showMessageDialog(getContentPane(), 
+                        combobox, "Alterar Ocupação",
+                        JOptionPane.QUESTION_MESSAGE);
+                jtfOcupacao.setText(combobox.getSelectedItem().toString());
             }
         });
     }
