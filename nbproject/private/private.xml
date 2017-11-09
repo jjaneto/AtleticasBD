@@ -3,7 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/Users/jjaneto/NetBeansProjects/AtleticaBD/src/gui/FramePrincipal.java</file>
+            <file>file:/Users/jjaneto/NetBeansProjects/AtleticaBD/src/utils/BancoControle.java</file>
+            <file>file:/Users/jjaneto/NetBeansProjects/AtleticaBD/src/gui/FrameVisualizar.java</file>
+            <file>file:/Users/jjaneto/NetBeansProjects/AtleticaBD/src/utils/TabelaMembros.java</file>
+            <file>file:/Users/jjaneto/NetBeansProjects/AtleticaBD/src/utils/Membro.java</file>
+            <file>file:/Users/jjaneto/NetBeansProjects/AtleticaBD/src/gui/FrameAdicionar.java</file>
         </group>
     </open-files>
 </project-private>

@@ -184,7 +184,7 @@ public final class FramePrincipal extends JFrame implements FrameInterativo {
                 break;
             case MEMBRO_DESDE:
                 for (Membro mbr : arrMembros) {
-                    LocalDate dateMembro = mbr.getMembro_desde();
+                    LocalDate dateMembro = mbr.getMembroDesde();
                     LocalDate diaPesquisado = LocalDate.parse(what, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
                     if (dateMembro.isAfter(diaPesquisado) || dateMembro.isEqual(diaPesquisado)) {
                         model.addMembroArrAuxiliar(mbr);

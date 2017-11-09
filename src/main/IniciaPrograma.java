@@ -41,8 +41,8 @@ public class IniciaPrograma {
         fw_err = new FileOutputStream(now.toString() + "_err", true);
         ps_err = new PrintStream(fw_err);
 
-        System.setOut(ps_out);
-        System.setErr(ps_err);
+//        System.setOut(ps_out);
+//        System.setErr(ps_err);
 
         System.out.println("-----[INICIO DO PROGRAMA " + LocalDateTime.now() + "]-----");
         BancoControle bdc = new BancoControle("postgres", "root", true);
